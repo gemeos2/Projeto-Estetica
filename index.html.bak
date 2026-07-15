@@ -1,0 +1,2620 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Espaço Lumiè — Estética & Beleza</title>
+
+    <!-- Libraries (same as design system) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+
+    <!-- Fonts (same families as design system) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#3B322C',
+                        ink2: '#2C2620',
+                        cream: '#FAF7F5',
+                        cream2: '#F1EAE5',
+                        sand: '#EFE6DF',
+                        terra: '#D9B8A8',
+                        amber: '#E7CFC3',
+                        amber2: '#CBA592',
+                        bronze: '#B08C77',
+                        sage: '#7C8C6E',
+                        forest: '#5C6B50',
+                        rose: '#D9B8A8',
+                        gold: '#B08C77',
+                    },
+                    fontFamily: {
+                        serif: ['Fraunces', 'Playfair Display', 'serif'],
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ============================================================
+     ESPAÇO LUMIÈ — Design tokens (from design_system.html)
+     ============================================================ */
+        :root {
+            --ink: #3B322C;
+            --ink-2: #2C2620;
+            --cream: #FAF7F5;
+            --cream-2: #F1EAE5;
+            --sand: #EFE6DF;
+            --terra: #D9B8A8;
+            --amber: #E7CFC3;
+            --amber-2: #CBA592;
+            --bronze: #B08C77;
+            --sage: #7C8C6E;
+            --forest: #7C8C6E;
+            --rose: #D9B8A8;
+            --gold: #B08C77;
+
+            --grad-sunrise: linear-gradient(135deg, #E7CFC3 0%, #D9B8A8 50%, #B08C77 100%);
+            --grad-halo: radial-gradient(circle at 50% 40%, rgba(217, 184, 168, .6), rgba(176, 140, 119, .18) 40%, transparent 70%);
+            --grad-cream: linear-gradient(180deg, #FAF7F5 0%, #F1EAE5 100%);
+
+            --ease-soft: cubic-bezier(.22, 1, .36, 1);
+            --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+
+            --shadow-card: 0 24px 60px -28px rgba(59, 50, 44, .35);
+            --shadow-float: 0 12px 34px -14px rgba(59, 50, 44, .28);
+            --radius: 22px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            /* proximity: só "encaixa" quando perto de um ponto de snap
+               (os .story-step da seção "Por que escolher") — o restante do
+               site continua rolando livremente */
+            scroll-snap-type: y proximity;
+        }
+
+        body {
+            background: var(--cream);
+            color: var(--ink);
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: var(--amber);
+            color: var(--ink)
+        }
+
+        .font-serif {
+            font-family: 'Fraunces', 'Playfair Display', serif
+        }
+
+        .font-mono {
+            font-family: 'IBM Plex Mono', ui-monospace, monospace
+        }
+
+        /* ---- Grain / noise overlay ---- */
+        .grain::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: .05;
+            z-index: 3;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* floating aurora blobs */
+        .aura-field {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0
+        }
+
+        .aura-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: .55;
+            animation: drift 22s var(--ease-soft) infinite alternate;
+            will-change: transform;
+        }
+
+        .aura-blob.b1 {
+            width: 520px;
+            height: 520px;
+            background: var(--grad-halo);
+            top: -120px;
+            left: -80px
+        }
+
+        .aura-blob.b2 {
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, rgba(124, 140, 110, .38), transparent 70%);
+            bottom: -140px;
+            right: -60px;
+            animation-duration: 28s;
+            animation-delay: -6s
+        }
+
+        .aura-blob.b3 {
+            width: 340px;
+            height: 340px;
+            background: radial-gradient(circle, rgba(217, 184, 168, .4), transparent 70%);
+            top: 30%;
+            right: 20%;
+            animation-duration: 19s;
+            animation-delay: -3s
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translate(0, 0) scale(1)
+            }
+
+            50% {
+                transform: translate(40px, -30px) scale(1.12)
+            }
+
+            100% {
+                transform: translate(-30px, 40px) scale(.95)
+            }
+        }
+
+        /* ---- Reveal on scroll / entrance ---- */
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(28px);
+            filter: blur(6px);
+            transition: opacity .9s var(--ease-soft), transform .9s var(--ease-soft), filter .9s var(--ease-soft)
+        }
+
+        [data-reveal].is-in {
+            opacity: 1;
+            transform: none;
+            filter: blur(0)
+        }
+
+        [data-reveal-delay="1"] {
+            transition-delay: .08s
+        }
+
+        [data-reveal-delay="2"] {
+            transition-delay: .16s
+        }
+
+        [data-reveal-delay="3"] {
+            transition-delay: .24s
+        }
+
+        [data-reveal-delay="4"] {
+            transition-delay: .32s
+        }
+
+        [data-reveal-delay="5"] {
+            transition-delay: .40s
+        }
+
+        /* per-word hero reveal */
+        .word {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: top
+        }
+
+        .word>span {
+            display: inline-block;
+            transform: translateY(110%);
+        }
+
+        /* shimmer sweep on badges */
+        @keyframes shimmer {
+            to {
+                background-position: 200% center
+            }
+        }
+
+        .shimmer-text,
+        .shimmer-text>span {
+            background: linear-gradient(90deg, var(--amber), var(--terra), var(--amber));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shimmer 5s linear infinite;
+        }
+
+        /* ============================================================
+     BUTTONS
+     ============================================================ */
+        .btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: .6rem;
+            font-weight: 500;
+            font-size: .95rem;
+            letter-spacing: .01em;
+            padding: .95rem 1.7rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: transform .35s var(--ease-spring), box-shadow .35s var(--ease-soft), background .35s;
+            overflow: hidden;
+            border: 1px solid transparent;
+            isolation: isolate;
+        }
+
+        .btn:active {
+            transform: scale(.96)
+        }
+
+        .btn .ico {
+            transition: transform .4s var(--ease-spring)
+        }
+
+        .btn:hover .ico {
+            transform: translateX(4px) rotate(0deg)
+        }
+
+        /* solar — nude/rosé gradient with soft glow pulse */
+        .btn-solar {
+            background: var(--grad-sunrise);
+            color: var(--ink);
+            font-weight: 600;
+            box-shadow: 0 12px 30px -12px rgba(176, 140, 119, .6)
+        }
+
+        .btn-solar:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 0 4px rgba(217, 184, 168, .35), 0 18px 44px -14px rgba(176, 140, 119, .7)
+        }
+
+        /* ghost light — outline that fills on hover (over dark hero) */
+        .btn-ghost-light {
+            background: transparent;
+            color: var(--cream);
+            border-color: rgba(250, 247, 245, .35)
+        }
+
+        .btn-ghost-light:hover {
+            background: var(--cream);
+            color: var(--ink);
+            border-color: var(--cream);
+            transform: translateY(-3px)
+        }
+
+        /* primary — dark ink pill */
+        .btn-primary {
+            background: var(--ink);
+            color: var(--cream);
+            box-shadow: var(--shadow-float)
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 40px -14px rgba(176, 140, 119, .6)
+        }
+
+        /* ---- pill tag / badge ---- */
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .4rem .85rem;
+            border-radius: 999px;
+            font-size: .72rem;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, .85);
+            color: var(--ink);
+            box-shadow: var(--shadow-float);
+            backdrop-filter: blur(6px);
+        }
+
+        .pill .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--bronze);
+            box-shadow: 0 0 0 3px rgba(217, 184, 168, .4);
+            animation: blink 2s ease-in-out infinite
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: .35
+            }
+        }
+
+        /* ---- nav ---- */
+        .nav-link {
+            position: relative;
+            font-size: .92rem;
+            transition: opacity .3s;
+            letter-spacing: .02em
+        }
+
+        .nav-link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -6px;
+            height: 2px;
+            width: 0;
+            background: currentColor;
+            transition: width .35s var(--ease-soft)
+        }
+
+        .nav-link:hover::after {
+            width: 100%
+        }
+
+        /* section label */
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .72rem;
+            font-weight: 600;
+            letter-spacing: .28em;
+            text-transform: uppercase
+        }
+
+        .eyebrow::before,
+        .eyebrow::after {
+            content: "";
+            width: 34px;
+            height: 1px;
+            background: currentColor;
+            opacity: .6
+        }
+
+        /* card-glass helper (nav) */
+        .card-glass {
+            background: rgba(255, 255, 255, .55);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, .6)
+        }
+
+        /* scroll cue */
+        .scroll-cue {
+            width: 26px;
+            height: 44px;
+            border: 2px solid rgba(250, 247, 245, .5);
+            border-radius: 14px;
+            position: relative
+        }
+
+        .scroll-cue::after {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 8px;
+            border-radius: 2px;
+            background: var(--terra);
+            animation: cue 1.8s var(--ease-soft) infinite
+        }
+
+        @keyframes cue {
+            0% {
+                opacity: 0;
+                top: 8px
+            }
+
+            30% {
+                opacity: 1
+            }
+
+            100% {
+                opacity: 0;
+                top: 24px
+            }
+        }
+
+        /* mobile menu button */
+        #burger.open .burger-ico {
+            transform: rotate(90deg)
+        }
+
+        /* mobile menu panel — open state */
+        #mobile-menu.open {
+            transform: scaleY(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-link {
+            position: relative;
+            width: max-content;
+            transition: color .3s var(--ease-soft);
+        }
+
+        .mobile-link:active {
+            color: var(--bronze);
+        }
+
+        /* ============================================================
+     SOBRE NÓS — Texto (esquerda) + imagem (direita)
+     ============================================================ */
+        .sobre-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(2.5rem, 5vw, 5rem);
+            align-items: center;
+        }
+
+        /* imagem à esquerda, texto à direita (ordem do HTML preservada) */
+        .sobre-grid .sobre-media {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .sobre-grid>div:not(.sobre-media) {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        /* coluna da imagem */
+        .sobre-media__frame {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 34px;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(255, 255, 255, .55);
+            position: relative;
+        }
+
+        .sobre-media__frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* empilha em uma coluna no mobile — texto em cima, imagem embaixo */
+        @media (max-width: 860px) {
+            .sobre-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .sobre-grid .sobre-media,
+            .sobre-grid>div:not(.sobre-media) {
+                grid-column: auto;
+                grid-row: auto;
+            }
+        }
+
+        /* ============================================================
+     SERVIÇOS — LineSidebar (efeito de proximidade do cursor)
+     ============================================================ */
+        .serv-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+            gap: clamp(2.5rem, 6vw, 6rem);
+            align-items: center;
+        }
+
+        /* -- LineSidebar -- */
+        .line-sidebar {
+            --accent-color: var(--bronze);
+            --text-color: #6E645C;
+            --marker-color: #C9BBB0;
+            --marker-length: 64px;
+            --marker-gap: 4px;
+            --tick-scale: 0.5;
+            --max-shift: 26px;
+            --item-gap: 26px;
+            --font-size: 1.7rem;
+            --smoothing: 120ms;
+
+            position: relative;
+            display: flex;
+            justify-content: flex-start;
+            padding-left: calc(var(--marker-length) + var(--marker-gap));
+        }
+
+        .line-sidebar ul {
+            margin: 0;
+            padding: 1rem 0;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--item-gap);
+        }
+
+        .line-sidebar li {
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* área de clique/hover ampliada */
+        .line-sidebar li::before {
+            content: "";
+            position: absolute;
+            inset: -6px -48px;
+        }
+
+        /* tick curto entre os itens */
+        .line-sidebar li::after {
+            content: "";
+            position: absolute;
+            left: calc(-1 * var(--marker-length) - var(--marker-gap));
+            top: calc(100% + var(--item-gap) / 2);
+            height: 1px;
+            width: calc(var(--marker-length) * var(--tick-scale));
+            background-color: var(--marker-color);
+            opacity: .5;
+            transform-origin: left;
+            transform: translateY(-50%) scaleX(calc(0.7 + var(--effect, 0) * 0.6));
+        }
+
+        .line-sidebar li:last-child::after {
+            content: none;
+        }
+
+        /* marcador principal */
+        .line-sidebar .marker {
+            position: absolute;
+            left: calc(-1 * var(--marker-length) - var(--marker-gap));
+            top: 50%;
+            height: 1px;
+            width: var(--marker-length);
+            transform-origin: left;
+            transform: translateY(-50%) scaleX(calc(0.7 + var(--effect, 0) * 0.5));
+            background-color: color-mix(in srgb, var(--accent-color) calc(var(--effect, 0) * 100%), var(--marker-color));
+        }
+
+        .line-sidebar .label {
+            position: relative;
+            display: inline-flex;
+            align-items: baseline;
+            line-height: 1.2;
+            font-family: 'Fraunces', 'Playfair Display', serif;
+            font-size: var(--font-size);
+            color: color-mix(in srgb, var(--accent-color) calc(var(--effect, 0) * 100%), var(--text-color));
+            transform: translateX(calc(var(--effect, 0) * var(--max-shift)));
+        }
+
+        .line-sidebar .idx {
+            margin-right: .6rem;
+            font-family: 'IBM Plex Mono', ui-monospace, monospace;
+            font-size: .5em;
+            opacity: calc(.55 + var(--effect, 0) * .45);
+        }
+
+        .line-sidebar li[aria-current="true"] .label {
+            font-style: italic;
+        }
+
+        /* painel de detalhe do serviço ativo */
+        .serv-detail {
+            position: relative;
+            border-radius: 30px;
+            padding: clamp(2rem, 4vw, 3rem);
+            background: #3B322C;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(255, 255, 255, .12);
+            height: 420px;
+            /* altura fixa: todos os cards iguais, sem salto na troca */
+            overflow: hidden;
+        }
+
+        .serv-detail::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: var(--grad-halo);
+            opacity: .18;
+            mix-blend-mode: screen;
+        }
+
+        /* texto legível sobre o fundo escuro #3B322C */
+        .serv-detail h3 {
+            color: var(--cream) !important;
+        }
+
+        .serv-detail p {
+            color: rgba(250, 247, 245, .82) !important;
+        }
+
+        .serv-detail iconify-icon {
+            color: var(--cream) !important;
+        }
+
+        .serv-detail .pill {
+            background: rgba(255, 255, 255, .55);
+            color: var(--ink);
+            box-shadow: none;
+            border: 1px solid rgba(59, 50, 44, .12);
+        }
+
+        .serv-panel {
+            display: none;
+        }
+
+        .serv-panel.is-active {
+            display: block;
+        }
+
+        /* durante a troca, o painel que sai fica sobreposto ao que entra */
+        .serv-panel.is-leaving {
+            display: block;
+            position: absolute;
+            inset: clamp(2rem, 4vw, 3rem);
+            pointer-events: none;
+        }
+
+        /* --- entrada direcional --- */
+        .serv-panel.enter-up {
+            animation: servEnterUp .5s var(--ease-soft) both
+        }
+
+        .serv-panel.enter-down {
+            animation: servEnterDown .5s var(--ease-soft) both
+        }
+
+        /* --- saída direcional --- */
+        .serv-panel.leave-up {
+            animation: servLeaveUp .42s var(--ease-soft) both
+        }
+
+        .serv-panel.leave-down {
+            animation: servLeaveDown .42s var(--ease-soft) both
+        }
+
+        /* entra de cima (próximo item está acima do atual) */
+        @keyframes servEnterDown {
+            from {
+                opacity: 0;
+                transform: translateY(-26px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        /* entra de baixo (próximo item está abaixo do atual) */
+        @keyframes servEnterUp {
+            from {
+                opacity: 0;
+                transform: translateY(26px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        /* sai para cima (o que vem está acima) */
+        @keyframes servLeaveUp {
+            from {
+                opacity: 1;
+                transform: none
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-26px)
+            }
+        }
+
+        /* sai para baixo (o que vem está abaixo) */
+        @keyframes servLeaveDown {
+            from {
+                opacity: 1;
+                transform: none
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(26px)
+            }
+        }
+
+        @media (max-width: 860px) {
+            .serv-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .line-sidebar {
+                --font-size: 1.4rem;
+                --marker-length: 44px;
+            }
+
+            /* no mobile o texto quebra em mais linhas: altura livre para não cortar */
+            .serv-detail {
+                height: auto;
+                min-height: 340px;
+            }
+        }
+
+        /* ============================================================
+     DEPOIMENTOS — Stack de cards arrastáveis (adaptado do React Bits)
+     ============================================================ */
+        .depo-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+            gap: clamp(2.5rem, 6vw, 6rem);
+            align-items: center;
+        }
+
+        /* palco do stack — mesma proporção quadrada do componente original */
+        .depo-stage {
+            position: relative;
+            width: min(100%, 30rem);
+            aspect-ratio: 1 / 1;
+            margin-inline: auto;
+            perspective: 700px;
+        }
+
+        /* cada card ocupa o palco inteiro e é empilhado via transform */
+        .depo-card {
+            position: absolute;
+            inset: 0;
+            border-radius: 28px;
+            padding: clamp(1.75rem, 3.5vw, 2.6rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: linear-gradient(155deg, #FAF7F5 0%, #F1EAE5 100%);
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(255, 255, 255, .7);
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            will-change: transform;
+            /* sem transição por padrão: o JS controla a mola.
+               a classe .settling reativa a transição só no "spring back" */
+            transform-origin: 90% 90%;
+        }
+
+        .depo-card.settling {
+            transition: transform .6s var(--ease-spring);
+        }
+
+        .depo-card:active {
+            cursor: grabbing;
+        }
+
+        /* aspas decorativas */
+        .depo-card .quote-mark {
+            font-family: 'Fraunces', 'Playfair Display', serif;
+            font-size: 4.5rem;
+            line-height: .6;
+            color: var(--terra);
+            opacity: .5;
+        }
+
+        .depo-card blockquote {
+            font-family: 'Fraunces', 'Playfair Display', serif;
+            font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+            line-height: 1.45;
+            color: var(--ink);
+            margin: 1rem 0 0;
+        }
+
+        .depo-card figcaption {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            margin-top: 1.5rem;
+        }
+
+        .depo-card .depo-avatar {
+            flex: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-family: 'Fraunces', 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--cream);
+            background: var(--grad-sunrise);
+            box-shadow: var(--shadow-float);
+        }
+
+        .depo-card .depo-name {
+            font-weight: 600;
+            font-size: .95rem;
+            color: var(--ink);
+        }
+
+        .depo-card .depo-since {
+            font-size: .78rem;
+            color: var(--bronze);
+            letter-spacing: .02em;
+        }
+
+        /* dica de arrastar */
+        .depo-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .78rem;
+            color: var(--bronze);
+            letter-spacing: .04em;
+        }
+
+        .depo-hint iconify-icon {
+            animation: depoNudge 2.4s var(--ease-soft) infinite;
+        }
+
+        @keyframes depoNudge {
+
+            0%,
+            100% {
+                transform: translateX(0)
+            }
+
+            50% {
+                transform: translateX(6px)
+            }
+        }
+
+        /* dots de progresso */
+        .depo-dots {
+            display: inline-flex;
+            gap: .5rem;
+            margin-top: 1.75rem;
+        }
+
+        .depo-dots button {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(176, 140, 119, .3);
+            transition: width .35s var(--ease-soft), background .35s;
+            cursor: pointer;
+        }
+
+        .depo-dots button[aria-current="true"] {
+            width: 26px;
+            background: var(--bronze);
+        }
+
+        @media (max-width: 860px) {
+            .depo-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .depo-stage {
+                width: min(100%, 22rem);
+            }
+        }
+
+        /* ============================================================
+     POR QUE ESCOLHER — Sticky story (imagem fixa + passos no scroll)
+     ============================================================ */
+        @keyframes sonar {
+            0% {
+                transform: scale(1);
+                opacity: .7
+            }
+
+            100% {
+                transform: scale(2.6);
+                opacity: 0
+            }
+        }
+
+        .sonar::before,
+        .sonar::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 9999px;
+            border: 1px solid currentColor;
+            animation: sonar 2.4s ease-out infinite;
+        }
+
+        .sonar::after {
+            animation-delay: 1.2s;
+        }
+
+        /* ---- scroll-snap por passo ----
+           cada .story-step é um ponto de ancoragem: ao rolar, a página
+           "encaixa" no passo mais próximo em vez de exigir rolagem contínua
+           até o título ficar no centro */
+        #diferenciais .story-step {
+            scroll-snap-align: center;
+            scroll-snap-stop: always;
+            /* não deixa pular 2 passos num gesto */
+        }
+
+        /* respiro de meia-tela no topo e no fim da coluna de passos:
+           permite que o PRIMEIRO e o ÚLTIMO passo também consigam
+           centralizar na tela (senão o 1º fica acima e o último abaixo) */
+        @media (min-width: 1024px) {
+            #diferenciais .story-steps {
+                padding-top: 25vh;
+                padding-bottom: 25vh;
+            }
+        }
+
+        /* ============================================================
+     CONTATO / CTA — Formulário (esquerda) + vídeo scroll (direita)
+     ============================================================ */
+        .cta-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+            gap: clamp(2.5rem, 5vw, 4.5rem);
+            align-items: stretch;
+        }
+
+        /* --- coluna do formulário --- */
+        .cta-form-card {
+            position: relative;
+            border-radius: 30px;
+            padding: clamp(1.75rem, 3.5vw, 2.75rem);
+            background: linear-gradient(155deg, #FAF7F5 0%, #F1EAE5 100%);
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(255, 255, 255, .7);
+        }
+
+        .cta-lead-note {
+            color: var(--ink);
+            opacity: .82;
+            line-height: 1.55;
+        }
+
+        .cta-field {
+            position: relative;
+            margin-top: 1.6rem;
+        }
+
+        .cta-field textarea {
+            width: 100%;
+            min-height: 150px;
+            resize: vertical;
+            border-radius: 18px;
+            border: 1px solid rgba(59, 50, 44, .16);
+            background: rgba(255, 255, 255, .7);
+            padding: 1.1rem 1.2rem;
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--ink);
+            transition: border-color .3s var(--ease-soft), box-shadow .3s var(--ease-soft), background .3s;
+        }
+
+        .cta-field textarea::placeholder {
+            color: rgba(59, 50, 44, .45);
+        }
+
+        .cta-field textarea:focus {
+            outline: none;
+            border-color: var(--bronze);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(217, 184, 168, .3);
+        }
+
+        .cta-char {
+            position: absolute;
+            right: 1rem;
+            bottom: .7rem;
+            font-family: 'IBM Plex Mono', ui-monospace, monospace;
+            font-size: .72rem;
+            color: var(--bronze);
+            opacity: .7;
+            pointer-events: none;
+        }
+
+        .cta-submit {
+            width: 100%;
+            justify-content: center;
+            margin-top: 1.2rem;
+        }
+
+        .cta-submit[disabled] {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .cta-submit .btn-spinner {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid rgba(59, 50, 44, .35);
+            border-top-color: var(--ink);
+            animation: ctaSpin .7s linear infinite;
+            display: none;
+        }
+
+        .cta-submit.is-loading .btn-spinner {
+            display: inline-block;
+        }
+
+        .cta-submit.is-loading .ico {
+            display: none;
+        }
+
+        @keyframes ctaSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .cta-privacy {
+            margin-top: .9rem;
+            font-size: .78rem;
+            color: var(--ink);
+            opacity: .55;
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            line-height: 1.4;
+        }
+
+        /* --- painel de resultado da IA --- */
+        .cta-plan {
+            margin-top: 1.6rem;
+            border-radius: 22px;
+            padding: 1.4rem 1.5rem;
+            background: var(--ink);
+            color: var(--cream);
+            box-shadow: var(--shadow-float);
+            position: relative;
+            overflow: hidden;
+            display: none;
+        }
+
+        .cta-plan.is-open {
+            display: block;
+            animation: ctaPlanIn .55s var(--ease-soft) both;
+        }
+
+        @keyframes ctaPlanIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .cta-plan::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: var(--grad-halo);
+            opacity: .16;
+            mix-blend-mode: screen;
+        }
+
+        .cta-plan__head {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-plan__head iconify-icon {
+            color: var(--terra);
+        }
+
+        .cta-plan__title {
+            font-family: 'Fraunces', 'Playfair Display', serif;
+            font-size: 1.25rem;
+            color: var(--cream);
+        }
+
+        .cta-plan__intro {
+            position: relative;
+            z-index: 1;
+            font-size: .92rem;
+            line-height: 1.55;
+            color: rgba(250, 247, 245, .82);
+            margin-bottom: 1.1rem;
+        }
+
+        .cta-plan__list {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: .7rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .cta-plan__item {
+            display: flex;
+            gap: .8rem;
+            align-items: flex-start;
+            padding: .85rem 1rem;
+            border-radius: 14px;
+            background: rgba(250, 247, 245, .06);
+            border: 1px solid rgba(250, 247, 245, .1);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: ctaItemIn .5s var(--ease-soft) forwards;
+        }
+
+        @keyframes ctaItemIn {
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .cta-plan__num {
+            flex: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-family: 'IBM Plex Mono', ui-monospace, monospace;
+            font-size: .78rem;
+            color: var(--ink);
+            background: var(--grad-sunrise);
+        }
+
+        .cta-plan__svc {
+            font-weight: 600;
+            font-size: .95rem;
+            color: var(--cream);
+            display: block;
+            margin-bottom: .15rem;
+        }
+
+        .cta-plan__why {
+            font-size: .82rem;
+            line-height: 1.45;
+            color: rgba(250, 247, 245, .7);
+        }
+
+        .cta-plan__foot {
+            position: relative;
+            z-index: 1;
+            margin-top: 1.2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .8rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cta-plan__disclaimer {
+            font-size: .72rem;
+            color: rgba(250, 247, 245, .5);
+            max-width: 22rem;
+            line-height: 1.4;
+        }
+
+        /* --- coluna do vídeo (frame sequence via scroll) --- */
+        .cta-video {
+            position: relative;
+            z-index: 0;
+            /* cria contexto de empilhamento próprio, para o overlay ficar acima do vídeo */
+            isolation: isolate;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(255, 255, 255, .5);
+            background: var(--ink2);
+            min-height: 420px;
+        }
+
+        .cta-video canvas,
+        .cta-video video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Overlay do vídeo. O <video> é promovido a uma camada de composição própria
+           e, como irmão sem camada, sobrepunha um overlay comum — por isso o véu é
+           pintado pelo ::after do contêiner, com z-index acima do vídeo. */
+        .cta-video__overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            /* leve véu uniforme na cor ink + gradiente que escurece o rodapé p/ a legenda */
+            background:
+                linear-gradient(180deg, rgba(44, 38, 32, .1) 0%, transparent 35%, rgba(44, 38, 32, .55) 100%),
+                rgba(44, 38, 32, .18);
+        }
+
+        .cta-video__caption {
+            position: absolute;
+            left: 1.4rem;
+            bottom: 1.4rem;
+            right: 1.4rem;
+            z-index: 2;
+            color: var(--cream);
+        }
+
+        .cta-video__caption .pill {
+            margin-bottom: .8rem;
+        }
+
+        .cta-video__caption p {
+            font-family: 'Fraunces', 'Playfair Display', serif;
+            font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+            line-height: 1.25;
+            max-width: 20rem;
+        }
+
+        @media (max-width: 860px) {
+            .cta-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .cta-video {
+                min-height: 340px;
+                aspect-ratio: 4 / 5;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: .001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .001ms !important
+            }
+
+            [data-reveal] {
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important
+            }
+
+            .hero-title .word>span {
+                transform: none !important
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <noscript>
+        <style>
+            [data-reveal] {
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important
+            }
+
+            .hero-title .word>span {
+                transform: none !important
+            }
+        </style>
+    </noscript>
+
+    <!-- ============================================================
+     STICKY NAV
+     ============================================================ -->
+    <header id="nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-500 text-cream">
+        <nav class="mx-auto max-w-7xl px-5 md:px-8 py-5">
+            <div class="flex items-center justify-between">
+                <!-- brand -->
+                <a href="#top" class="flex items-baseline gap-2">
+                    <span class="font-serif text-2xl tracking-tight">Espaço</span>
+                    <span class="font-serif italic text-terra text-xl">Lumiè</span>
+                </a>
+                <!-- links (center) -->
+                <div class="hidden md:flex items-center gap-10 opacity-90">
+                    <a class="nav-link" href="#home">Home</a>
+                    <a class="nav-link" href="#sobre">Sobre nós</a>
+                    <a class="nav-link" href="#servicos">Serviços</a>
+                    <a class="nav-link" href="#diferenciais">Diferenciais</a>
+                    <a class="nav-link" href="#depoimentos">Depoimentos</a>
+                    <a class="nav-link" href="#contato">Contato</a>
+                </div>
+                <!-- schedule button (right, desktop) -->
+                <a href="#contato" class="btn btn-solar py-2.5 px-6 text-sm hidden md:inline-flex">
+                    Agendar
+                    <iconify-icon class="ico" icon="solar:arrow-right-linear" width="16"></iconify-icon>
+                </a>
+
+                <!-- burger (mobile) -->
+                <button id="burger" class="md:hidden inline-flex items-center justify-center w-11 h-11 -mr-2"
+                    aria-label="Abrir menu" aria-expanded="false" aria-controls="mobile-menu">
+                    <iconify-icon class="burger-ico transition-transform duration-300"
+                        icon="solar:hamburger-menu-linear" width="26"></iconify-icon>
+                </button>
+            </div>
+        </nav>
+
+        <!-- mobile menu panel -->
+        <div id="mobile-menu"
+            class="md:hidden fixed inset-x-0 top-0 z-40 origin-top scale-y-0 opacity-0 pointer-events-none transition-all duration-400"
+            style="transition-timing-function:var(--ease-soft)">
+            <div class="card-glass pt-24 pb-8 px-6 text-ink">
+                <div class="flex flex-col gap-5 text-lg font-serif">
+                    <a class="mobile-link" href="#home">Home</a>
+                    <a class="mobile-link" href="#sobre">Sobre nós</a>
+                    <a class="mobile-link" href="#servicos">Serviços/a>
+                        <a class="mobile-link" href="#diferenciais">Diferenciais</a>
+                        <a class="mobile-link" href="#depoimentos">Depoimentos</a>
+                        <a class="mobile-link" href="#contato">Contato</a>
+                </div>
+                <a href="#contato" class="btn btn-solar mt-8 w-full justify-center">
+                    Agendar avaliação
+                    <iconify-icon class="ico" icon="solar:arrow-right-linear" width="16"></iconify-icon>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+     HERO / FIRST FOLD
+     ============================================================ -->
+    <section id="top" class="relative h-screen grain overflow-hidden flex flex-col">
+        <!-- background image -->
+        <div class="absolute inset-0 z-0">
+            <img src="ds-assets/backHero.webp" alt="Ritual de estética e cuidado com a pele"
+                class="w-full h-full object-cover" />
+            <!-- dark editorial overlays for text legibility -->
+            <div class="absolute inset-0"
+                style="background:linear-gradient(180deg,rgba(44,38,32,.55) 0%,rgba(44,38,32,.25) 30%,rgba(44,38,32,.55) 75%,rgba(44,38,32,.82) 100%)">
+            </div>
+            <div class="absolute inset-0"
+                style="background:radial-gradient(ellipse at 50% 40%, transparent 30%, rgba(44,38,32,.35) 100%)"></div>
+        </div>
+        <!-- soft aurora glow accents -->
+        <div class="aura-field" style="mix-blend-mode:screen;opacity:.5">
+            <div class="aura-blob b1"></div>
+            <div class="aura-blob b3"></div>
+        </div>
+
+        <!-- content -->
+        <div class="relative z-10 flex-1 flex items-center">
+            <div class="mx-auto max-w-5xl px-5 md:px-8 w-full text-center text-cream pt-28 pb-24">
+
+                <!-- eyebrow -->
+                <p class="eyebrow justify-center text-amber mb-8" data-reveal>
+                    Estética avançada &amp; bem-estar
+                </p>
+
+                <!-- headline -->
+                <h1
+                    class="hero-title font-serif leading-[.98] tracking-tight text-[8.5vw] md:text-[5.6rem] lg:text-[6.4rem]">
+                    <span class="word"><span>Sua beleza natural,</span></span><br>
+                    <span class="word italic shimmer-text"><span>realçada</span></span>
+                    <span class="word"><span>&nbsp;com ciência</span></span><br>
+                    <span class="word"><span>e cuidado.</span></span>
+                </h1>
+
+                <!-- subtitle -->
+                <p class="max-w-2xl mx-auto mt-8 text-lg md:text-xl leading-relaxed text-cream/85" data-reveal
+                    data-reveal-delay="2">
+                    Tratamentos faciais, corporais e depilação a laser com protocolos
+                    personalizados e acompanhamento profissional. Agende sua avaliação e
+                    descubra o que o seu corpo precisa.
+                </p>
+
+                <!-- CTAs -->
+                <div class="flex flex-wrap items-center justify-center gap-4 mt-10" data-reveal data-reveal-delay="3">
+                    <a href="#contato" class="btn btn-solar">
+                        Agendar avaliação gratuita
+                        <iconify-icon class="ico" icon="solar:arrow-right-linear" width="18"></iconify-icon>
+                    </a>
+                    <a href="#tratamentos" class="btn btn-ghost-light">
+                        Conhecer os tratamentos
+                    </a>
+                </div>
+
+                <!-- support line / trust seal -->
+                <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-12 text-sm text-cream/80"
+                    data-reveal data-reveal-delay="4">
+                    <span class="inline-flex items-center gap-2">
+                        <iconify-icon icon="solar:medal-ribbons-star-bold" width="17" class="text-terra"></iconify-icon>
+                        +8 anos de mercado
+                    </span>
+                    <span class="opacity-40">·</span>
+                    <span class="inline-flex items-center gap-2">
+                        <iconify-icon icon="solar:heart-bold" width="17" class="text-terra"></iconify-icon>
+                        +3.000 atendimentos
+                    </span>
+                    <span class="opacity-40">·</span>
+                    <span class="inline-flex items-center gap-2">
+                        <iconify-icon icon="solar:star-bold" width="17" class="text-terra"></iconify-icon>
+                        Nota 4,9 no Google
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- scroll cue -->
+        <div class="relative z-10 pb-6 flex flex-col items-center gap-2 text-cream/60">
+            <span class="text-[.7rem] tracking-[.25em] uppercase">Role</span>
+            <span class="scroll-cue"></span>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     SOBRE NÓS — Texto (esquerda) + imagem (direita)
+     ============================================================ -->
+    <section id="sobre" class="relative bg-cream py-24 md:py-32">
+        <div class="sobre-grid mx-auto max-w-7xl px-5 md:px-8">
+
+            <!-- coluna esquerda: texto -->
+            <div>
+                <p class="eyebrow text-bronze mb-6" data-reveal>
+                    Sobre nós
+                </p>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-ink mb-8"
+                    data-reveal data-reveal-delay="1">
+                    Cada atendimento começa com uma
+                    <span class="italic text-bronze">conversa</span>.
+                </h2>
+                <div class="space-y-5 text-ink/80 leading-relaxed md:text-lg" data-reveal data-reveal-delay="2">
+                    <p>
+                        No Espaço Lumiè, cada atendimento começa com uma conversa. Antes de
+                        qualquer procedimento, avaliamos sua pele, seus hábitos, sua rotina e
+                        os seus objetivos — porque não existe protocolo único que funcione
+                        para todo mundo.
+                    </p>
+                    <p>
+                        Trabalhamos com equipamentos certificados pela Anvisa, produtos de
+                        linha profissional e profissionais em formação contínua. Nosso
+                        compromisso não é te transformar em outra pessoa: é te fazer se
+                        sentir bem sendo quem você é.
+                    </p>
+                </div>
+            </div>
+
+            <!-- coluna direita: imagem -->
+            <div class="sobre-media" data-reveal data-reveal-delay="2">
+                <div class="sobre-media__frame">
+                    <picture>
+                        <source srcset="ds-assets/imgSobreNos.webp" type="image/webp" />
+                        <img src="ds-assets/imgSobreNos-opt.jpg" width="1400" height="1400" loading="lazy"
+                            decoding="async" alt="Profissional do Espaço Lumiè realizando um atendimento facial" />
+                    </picture>
+                </div>
+            </div>
+
+        </div><!-- /.sobre-grid -->
+    </section>
+
+    <!-- ============================================================
+     SERVIÇOS — LineSidebar com painel de detalhe
+     ============================================================ -->
+    <section id="servicos" class="relative bg-cream py-24 md:py-32">
+        <div class="mx-auto max-w-7xl px-5 md:px-8">
+
+            <!-- intro -->
+            <div class="max-w-2xl mb-16 md:mb-20">
+                <p class="eyebrow text-bronze mb-6" data-reveal>Serviços</p>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-ink"
+                    data-reveal data-reveal-delay="1">
+                    Tratamentos pensados para <span class="italic text-bronze">o seu tempo</span>.
+                </h2>
+            </div>
+
+            <div class="serv-grid">
+
+                <!-- coluna esquerda: LineSidebar -->
+                <nav class="line-sidebar" id="serv-sidebar" data-reveal aria-label="Lista de serviços">
+                    <ul id="serv-list">
+                        <li data-index="0" aria-current="true">
+                            <span class="marker" aria-hidden="true"></span>
+                            <span class="label"><span class="idx">01</span><span>Limpeza de Pele profunda</span></span>
+                        </li>
+                        <li data-index="1">
+                            <span class="marker" aria-hidden="true"></span>
+                            <span class="label"><span class="idx">02</span><span>Depilação a laser</span></span>
+                        </li>
+                        <li data-index="2">
+                            <span class="marker" aria-hidden="true"></span>
+                            <span class="label"><span class="idx">03</span><span>Massagem Modeladora</span></span>
+                        </li>
+                        <li data-index="3">
+                            <span class="marker" aria-hidden="true"></span>
+                            <span class="label"><span class="idx">04</span><span>Design de Sobrancelha</span></span>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- coluna direita: detalhe do serviço ativo -->
+                <div class="serv-detail" data-reveal data-reveal-delay="1">
+                    <div class="serv-panel is-active" data-panel="0">
+                        <div class="relative z-10">
+                            <iconify-icon icon="solar:magic-stick-3-bold" width="38"
+                                class="text-bronze mb-5"></iconify-icon>
+                            <h3 class="font-serif text-2xl md:text-3xl text-ink mb-4">Limpeza de Pele profunda</h3>
+                            <p class="text-ink/80 leading-relaxed md:text-lg mb-6">
+                                Higienização completa com extração, esfoliação e ativos de tratamento.
+                                Remove impurezas, desobstrui os poros e devolve o viço — com protocolo
+                                ajustado ao seu tipo de pele.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="pill">Facial</span>
+                                <span class="pill">≈ 60 min</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="serv-panel" data-panel="1">
+                        <div class="relative z-10">
+                            <iconify-icon icon="solar:bolt-bold" width="38" class="text-bronze mb-5"></iconify-icon>
+                            <h3 class="font-serif text-2xl md:text-3xl text-ink mb-4">Depilação a laser</h3>
+                            <p class="text-ink/80 leading-relaxed md:text-lg mb-6">
+                                Redução progressiva e duradoura dos pelos com equipamento certificado
+                                pela Anvisa. Seguro para diferentes fototipos, com avaliação prévia e
+                                acompanhamento a cada sessão.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="pill">Corporal</span>
+                                <span class="pill">Certificado Anvisa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="serv-panel" data-panel="2">
+                        <div class="relative z-10">
+                            <iconify-icon icon="solar:hand-shake-bold" width="38"
+                                class="text-bronze mb-5"></iconify-icon>
+                            <h3 class="font-serif text-2xl md:text-3xl text-ink mb-4">Massagem Modeladora</h3>
+                            <p class="text-ink/80 leading-relaxed md:text-lg mb-6">
+                                Manobras firmes que estimulam a circulação e ajudam a modelar o contorno
+                                corporal, reduzindo a retenção de líquidos. Ideal em conjunto com uma
+                                rotina de cuidados contínua.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="pill">Corporal</span>
+                                <span class="pill">≈ 50 min</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="serv-panel" data-panel="3">
+                        <div class="relative z-10">
+                            <iconify-icon icon="solar:pen-new-square-bold" width="38"
+                                class="text-bronze mb-5"></iconify-icon>
+                            <h3 class="font-serif text-2xl md:text-3xl text-ink mb-4">Design de Sobrancelha</h3>
+                            <p class="text-ink/80 leading-relaxed md:text-lg mb-6">
+                                Mapeamento do formato ideal para o seu rosto, com alinhamento, simetria e
+                                acabamento delicado. Realça o olhar respeitando os traços naturais de
+                                cada pessoa.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="pill">Facial</span>
+                                <span class="pill">≈ 30 min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     POR QUE ESCOLHER — Sticky story (imagem fixa + passos no scroll)
+     ============================================================ -->
+    <section class="relative bg-[#2C2620] text-cream" id="diferenciais">
+        <div class="mx-auto max-w-7xl px-5 md:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-20">
+
+                <!-- visual fixo (pinned) -->
+                <div class="lg:sticky lg:top-0 flex lg:h-screen items-center py-16 lg:py-0">
+                    <div class="relative w-full">
+                        <div class="pointer-events-none absolute -inset-10 rounded-full bg-bronze/15 blur-3xl"
+                            id="storyGlow"></div>
+                        <div class="relative overflow-hidden rounded-3xl">
+                            <img src="ds-assets/interior.png" alt="Interior da clínica Espaço Lumiè"
+                                class="h-80 sm:h-[30rem] w-full object-cover will-change-transform" id="storyImg"
+                                loading="lazy" decoding="async" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-ink2/60 via-transparent to-transparent">
+                            </div>
+                            <div class="absolute bottom-5 left-5 flex items-center gap-3">
+                                <span class="relative flex h-2.5 w-2.5 text-terra">
+                                    <span class="sonar absolute inset-0"></span>
+                                    <span class="relative h-2.5 w-2.5 rounded-full bg-terra"></span>
+                                </span>
+                                <p class="text-sm font-medium tracking-widest uppercase text-cream/80">
+                                    Espaço Lumiè · Clínica
+                                </p>
+                            </div>
+                        </div>
+                        <!-- progresso -->
+                        <div class="mt-6 flex items-center gap-3">
+                            <div class="h-1 flex-1 rounded-full bg-white/10 overflow-hidden">
+                                <div class="h-full w-0 rounded-full bg-bronze" id="storyBar"></div>
+                            </div>
+                            <p class="text-xs font-medium text-cream/40 tabular-nums">
+                                <span id="storyPct">00</span>&nbsp;%
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- passos -->
+                <div class="story-steps pb-16 lg:py-0">
+                    <!-- cabeçalho da seção -->
+                    <div class="story-step flex min-h-[50vh] lg:min-h-[60vh] flex-col justify-center">
+                        <p class="eyebrow text-terra mb-6">Por que a Lumiè</p>
+                        <h2
+                            class="font-serif text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.05]">
+                            Por que escolher a clínica
+                            <em class="font-light italic text-terra">Lumiè</em>?
+                        </h2>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Não vendemos promessas. Construímos confiança — com método,
+                            transparência e cuidado em cada detalhe do seu atendimento.
+                        </p>
+                    </div>
+
+                    <div class="story-step flex min-h-[70vh] lg:min-h-[75vh] flex-col justify-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-terra">
+                            01 — Avaliação personalizada
+                        </p>
+                        <h3 class="mt-4 font-serif text-4xl sm:text-5xl font-medium tracking-tight leading-[1.08]">
+                            Um plano feito
+                            <em class="font-light italic text-terra">para você</em>
+                        </h3>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Nenhum protocolo é aplicado sem uma avaliação prévia e um plano
+                            feito para você.
+                        </p>
+                    </div>
+
+                    <div class="story-step flex min-h-[70vh] lg:min-h-[75vh] flex-col justify-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-terra">
+                            02 — Equipamentos certificados
+                        </p>
+                        <h3 class="mt-4 font-serif text-4xl sm:text-5xl font-medium tracking-tight leading-[1.08]">
+                            Registrados na
+                            <em class="font-light italic text-terra">Anvisa</em>
+                        </h3>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Toda a nossa aparelhagem é registrada na Anvisa e passa por
+                            manutenção periódica.
+                        </p>
+                    </div>
+
+                    <div class="story-step flex min-h-[70vh] lg:min-h-[75vh] flex-col justify-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-terra">
+                            03 — Ambiente reservado e higienizado
+                        </p>
+                        <h3 class="mt-4 font-serif text-4xl sm:text-5xl font-medium tracking-tight leading-[1.08]">
+                            Biossegurança
+                            <em class="font-light italic text-terra">rigorosa</em>
+                        </h3>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Salas individuais, materiais descartáveis e protocolos rígidos
+                            de biossegurança.
+                        </p>
+                    </div>
+
+                    <div class="story-step flex min-h-[70vh] lg:min-h-[75vh] flex-col justify-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-terra">
+                            04 — Acompanhamento de resultados
+                        </p>
+                        <h3 class="mt-4 font-serif text-4xl sm:text-5xl font-medium tracking-tight leading-[1.08]">
+                            Sua evolução,
+                            <em class="font-light italic text-terra">sessão a sessão</em>
+                        </h3>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Registramos sua evolução sessão a sessão, com fotos e relatórios
+                            de progresso.
+                        </p>
+                    </div>
+
+                    <div class="story-step flex min-h-[70vh] lg:min-h-[75vh] flex-col justify-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-terra">
+                            05 — Sem enrolação
+                        </p>
+                        <h3 class="mt-4 font-serif text-4xl sm:text-5xl font-medium tracking-tight leading-[1.08]">
+                            Honestidade,
+                            <em class="font-light italic text-terra">simples assim</em>
+                        </h3>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Se um tratamento não é indicado para você, nós dizemos. Simples
+                            assim.
+                        </p>
+                        <div class="mt-8">
+                            <a class="group inline-flex items-center gap-2 rounded-full bg-bronze px-6 py-3 text-sm font-medium text-cream transition-all hover:bg-terra hover:text-ink active:scale-95"
+                                href="#contato">
+                                Agendar avaliação gratuita
+                                <iconify-icon class="text-base transition-transform duration-300 group-hover:rotate-45"
+                                    icon="solar:arrow-right-up-bold-duotone"></iconify-icon>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     DEPOIMENTOS — Stack de cards arrastáveis
+     ============================================================ -->
+    <section id="depoimentos" class="relative bg-cream py-24 md:py-32 overflow-hidden">
+        <!-- aurora suave de fundo -->
+        <div class="aura-field" style="opacity:.4">
+            <div class="aura-blob b3"></div>
+        </div>
+
+        <div class="relative z-10 depo-grid mx-auto max-w-7xl px-5 md:px-8">
+
+            <!-- coluna esquerda: texto -->
+            <div>
+                <p class="eyebrow text-bronze mb-6" data-reveal>Depoimentos</p>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-ink mb-8"
+                    data-reveal data-reveal-delay="1">
+                    Quem passou por aqui
+                    <span class="italic text-bronze">conta</span>.
+                </h2>
+                <p class="text-ink/80 leading-relaxed md:text-lg max-w-md mb-8" data-reveal data-reveal-delay="2">
+                    Histórias reais de quem confiou o próprio cuidado à Lumiè. Arraste os
+                    cartões ou toque para ver o próximo depoimento.
+                </p>
+                <p class="depo-hint" data-reveal data-reveal-delay="3">
+                    <iconify-icon icon="solar:hand-shake-linear" width="18"></iconify-icon>
+                    Arraste ou clique para navegar
+                </p>
+
+                <!-- dots de progresso -->
+                <div class="depo-dots" id="depo-dots" role="tablist" aria-label="Selecionar depoimento" data-reveal
+                    data-reveal-delay="4"></div>
+            </div>
+
+            <!-- coluna direita: stack de cards -->
+            <div class="depo-stage" id="depo-stage" data-reveal data-reveal-delay="2" aria-live="polite">
+                <!-- 01 -->
+                <figure class="depo-card" data-depo="0">
+                    <div>
+                        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+                        <blockquote>
+                            Fiz limpeza de pele com a Camila e foi a primeira vez que saí de
+                            uma clínica sem irritação nenhuma. Já indiquei para minha irmã e
+                            minha mãe.
+                        </blockquote>
+                    </div>
+                    <figcaption>
+                        <span class="depo-avatar" aria-hidden="true">J</span>
+                        <span>
+                            <span class="depo-name">Juliana M.</span><br>
+                            <span class="depo-since">Cliente há 2 anos</span>
+                        </span>
+                    </figcaption>
+                </figure>
+
+                <!-- 02 -->
+                <figure class="depo-card" data-depo="1">
+                    <div>
+                        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+                        <blockquote>
+                            Comecei a depilação a laser com muito medo da dor e me surpreendi.
+                            Estou na 6ª sessão e a diferença é absurda.
+                        </blockquote>
+                    </div>
+                    <figcaption>
+                        <span class="depo-avatar" aria-hidden="true">P</span>
+                        <span>
+                            <span class="depo-name">Patrícia L.</span><br>
+                            <span class="depo-since">Cliente há 1 ano</span>
+                        </span>
+                    </figcaption>
+                </figure>
+
+                <!-- 03 -->
+                <figure class="depo-card" data-depo="2">
+                    <div>
+                        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+                        <blockquote>
+                            Atendimento humano de verdade. Elas lembram do seu nome, da sua
+                            rotina, do que você falou na última sessão.
+                        </blockquote>
+                    </div>
+                    <figcaption>
+                        <span class="depo-avatar" aria-hidden="true">R</span>
+                        <span>
+                            <span class="depo-name">Renata S.</span><br>
+                            <span class="depo-since">Cliente há 4 anos</span>
+                        </span>
+                    </figcaption>
+                </figure>
+
+                <!-- 04 -->
+                <figure class="depo-card" data-depo="3">
+                    <div>
+                        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+                        <blockquote>
+                            Fiz o pacote de massagem modeladora antes do casamento e o vestido
+                            caiu perfeito. Valeu cada sessão.
+                        </blockquote>
+                    </div>
+                    <figcaption>
+                        <span class="depo-avatar" aria-hidden="true">A</span>
+                        <span>
+                            <span class="depo-name">Amanda T.</span><br>
+                            <span class="depo-since">Cliente há 6 meses</span>
+                        </span>
+                    </figcaption>
+                </figure>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============================================================
+     CONTATO / CTA — Formulário (esquerda) + vídeo scroll (direita)
+     ============================================================ -->
+    <section id="contato" class="relative bg-cream py-24 md:py-32 overflow-hidden">
+        <!-- aurora suave de fundo -->
+        <div class="aura-field" style="opacity:.35">
+            <div class="aura-blob b1"></div>
+            <div class="aura-blob b2"></div>
+        </div>
+
+        <div class="relative z-10 mx-auto max-w-7xl px-5 md:px-8">
+
+            <!-- intro -->
+            <div class="max-w-2xl mb-14 md:mb-16">
+                <p class="eyebrow text-bronze mb-6" data-reveal>Avaliação gratuita</p>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-ink"
+                    data-reveal data-reveal-delay="1">
+                    Vamos começar pelo começo:
+                    <span class="italic text-bronze">uma avaliação</span>.
+                </h2>
+            </div>
+
+            <div class="cta-grid">
+
+                <!-- coluna esquerda: formulário -->
+                <div class="cta-form-card" data-reveal>
+                    <p class="cta-lead-note md:text-lg">
+                        A primeira consulta é <strong class="text-bronze">gratuita e sem
+                            compromisso</strong>. Você conta o que te incomoda, a gente avalia e
+                        monta um plano realista — com prazos e valores claros, do jeito que
+                        tem que ser.
+                    </p>
+
+                    <form id="cta-form" novalidate>
+                        <label for="cta-input" class="sr-only">O que você quer melhorar em você</label>
+                        <div class="cta-field">
+                            <textarea id="cta-input" name="mensagem" maxlength="600"
+                                placeholder="Digite aqui o que você quer melhorar em você"
+                                aria-describedby="cta-privacy"></textarea>
+                            <span class="cta-char" id="cta-char" aria-hidden="true">0 / 600</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-solar cta-submit" id="cta-submit" disabled>
+                            <span class="btn-spinner" aria-hidden="true"></span>
+                            <span class="cta-submit__label">Sugerir meu plano</span>
+                            <iconify-icon class="ico" icon="solar:magic-stick-3-bold" width="18"></iconify-icon>
+                        </button>
+
+                        <p class="cta-privacy" id="cta-privacy">
+                            <iconify-icon icon="solar:lock-keyhole-minimalistic-bold" width="14"></iconify-icon>
+                            Suas informações ficam entre você e a nossa equipe. Nada de spam.
+                        </p>
+                    </form>
+
+                    <!-- resultado gerado pela IA -->
+                    <div class="cta-plan" id="cta-plan" role="region" aria-live="polite" aria-label="Plano sugerido">
+                        <div class="cta-plan__head">
+                            <iconify-icon icon="solar:magic-stick-3-bold" width="22"></iconify-icon>
+                            <span class="cta-plan__title">Seu plano sugerido</span>
+                        </div>
+                        <p class="cta-plan__intro" id="cta-plan-intro"></p>
+                        <ul class="cta-plan__list" id="cta-plan-list"></ul>
+                        <div class="cta-plan__foot">
+                            <p class="cta-plan__disclaimer">
+                                Sugestão inicial gerada por IA. O plano final é definido na
+                                sua avaliação presencial ou online gratuita.
+                            </p>
+                            <a href="#contato" class="btn btn-solar py-2.5 px-6 text-sm" id="cta-plan-cta">
+                                Agendar avaliação
+                                <iconify-icon class="ico" icon="solar:arrow-right-linear" width="16"></iconify-icon>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- coluna direita: vídeo do interior do espaço -->
+                <div class="cta-video" id="cta-video" data-reveal data-reveal-delay="1">
+                    <video id="cta-video-el" autoplay muted loop playsinline preload="metadata"
+                        aria-label="Interior do Espaço Lumiè">
+                        <source src="ds-assets/video/videointerior.mp4" type="video/mp4" />
+                    </video>
+                    <div class="cta-video__overlay"></div>
+                    <div class="cta-video__caption">
+                        <p>Cada plano nasce de uma conversa — e de um cuidado pensado só para você.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     FOOTER
+     ============================================================ -->
+    <footer id="footer" class="relative overflow-hidden text-ink" style="background:var(--terra)">
+        <!-- soft aurora glow accents -->
+        <div class="aura-field" style="opacity:.35">
+            <div class="aura-blob b1"></div>
+            <div class="aura-blob b2"></div>
+        </div>
+
+        <div class="relative z-10 mx-auto max-w-7xl px-5 md:px-8 pt-20 pb-10">
+
+            <!-- top: brand + columns -->
+            <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+
+                <!-- brand + pitch -->
+                <div class="max-w-sm" data-reveal>
+                    <a href="#top" class="flex items-baseline gap-2 mb-5">
+                        <span class="font-serif text-3xl tracking-tight">Espaço</span>
+                        <span class="font-serif italic text-ink2 text-2xl">Lumiè</span>
+                    </a>
+                    <p class="text-ink/75 leading-relaxed">
+                        Estética avançada e bem-estar com protocolos personalizados.
+                        Cada atendimento começa com uma conversa — e um cuidado pensado só para você.
+                    </p>
+
+                    <!-- socials -->
+                    <div class="flex items-center gap-3 mt-7">
+                        <a href="#" aria-label="Instagram"
+                            class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-ink/10 hover:bg-ink hover:text-cream transition-colors duration-300">
+                            <iconify-icon icon="solar:gallery-round-bold" width="20"></iconify-icon>
+                        </a>
+                        <a href="#" aria-label="WhatsApp"
+                            class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-ink/10 hover:bg-ink hover:text-cream transition-colors duration-300">
+                            <iconify-icon icon="solar:chat-round-call-bold" width="20"></iconify-icon>
+                        </a>
+                        <a href="#" aria-label="Facebook"
+                            class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-ink/10 hover:bg-ink hover:text-cream transition-colors duration-300">
+                            <iconify-icon icon="solar:earth-bold" width="20"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- navegação -->
+                <div data-reveal data-reveal-delay="1">
+                    <p class="eyebrow text-ink2 mb-5">Navegação</p>
+                    <ul class="space-y-3 text-ink/80">
+                        <li><a class="nav-link" href="#home">Home</a></li>
+                        <li><a class="nav-link" href="#sobre">Sobre nós</a></li>
+                        <li><a class="nav-link" href="#tratamentos">Tratamentos</a></li>
+                        <li><a class="nav-link" href="#diferenciais">Diferenciais</a></li>
+                        <li><a class="nav-link" href="#depoimentos">Depoimentos</a></li>
+                    </ul>
+                </div>
+
+                <!-- serviços -->
+                <div data-reveal data-reveal-delay="2">
+                    <p class="eyebrow text-ink2 mb-5">Serviços</p>
+                    <ul class="space-y-3 text-ink/80">
+                        <li><a class="nav-link" href="#tratamentos">Limpeza de Pele</a></li>
+                        <li><a class="nav-link" href="#tratamentos">Depilação a laser</a></li>
+                        <li><a class="nav-link" href="#tratamentos">Massagem Modeladora</a></li>
+                        <li><a class="nav-link" href="#tratamentos">Design de Sobrancelha</a></li>
+                    </ul>
+                </div>
+
+                <!-- contato -->
+                <div data-reveal data-reveal-delay="3">
+                    <p class="eyebrow text-ink2 mb-5">Contato</p>
+                    <ul class="space-y-4 text-ink/80">
+                        <li class="flex items-start gap-3">
+                            <iconify-icon icon="solar:map-point-bold" width="18"
+                                class="text-ink2 mt-0.5 flex-none"></iconify-icon>
+                            <span>Rua das Flores, 123 — Centro<br>São Paulo, SP</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <iconify-icon icon="solar:phone-bold" width="18" class="text-ink2 flex-none"></iconify-icon>
+                            <a class="nav-link" href="tel:+5511999999999">(11) 99999-9999</a>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <iconify-icon icon="solar:letter-bold" width="18"
+                                class="text-ink2 flex-none"></iconify-icon>
+                            <a class="nav-link" href="mailto:contato@espacolumie.com.br">contato@espacolumie.com.br</a>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <iconify-icon icon="solar:clock-circle-bold" width="18"
+                                class="text-ink2 mt-0.5 flex-none"></iconify-icon>
+                            <span>Seg a Sex · 9h às 19h<br>Sáb · 9h às 14h</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- divider -->
+            <div
+                class="mt-16 pt-8 border-t border-ink/15 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-ink/70">
+                <p>© <span id="footer-year">2026</span> Espaço Lumiè. Todos os direitos reservados.</p>
+                <div class="flex items-center gap-6">
+                    <a class="nav-link" href="#">Política de Privacidade</a>
+                    <a class="nav-link" href="#">Termos de Uso</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+            /* ---- Footer year ---- */
+            (function () {
+                const y = document.getElementById('footer-year');
+                if (y) y.textContent = new Date().getFullYear();
+            })();
+
+        /* ---- Reveal on scroll ---- */
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+        }, { threshold: .12 });
+        document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+        /* Safety net */
+        addEventListener('load', () => setTimeout(() =>
+            document.querySelectorAll('[data-reveal]:not(.is-in)').forEach(el => {
+                const r = el.getBoundingClientRect();
+                if (r.top < innerHeight) el.classList.add('is-in');
+            }), 400));
+
+        /* ---- Mobile menu toggle ---- */
+        (function () {
+            const burger = document.getElementById('burger');
+            const menu = document.getElementById('mobile-menu');
+            if (!burger || !menu) return;
+            const ico = burger.querySelector('.burger-ico');
+
+            function setOpen(open) {
+                burger.classList.toggle('open', open);
+                menu.classList.toggle('open', open);
+                burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+                burger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+                if (ico) ico.setAttribute('icon', open ? 'solar:close-square-linear' : 'solar:hamburger-menu-linear');
+                document.body.style.overflow = open ? 'hidden' : '';
+            }
+
+            burger.addEventListener('click', () => setOpen(!menu.classList.contains('open')));
+            menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+            addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+        })();
+
+        /* ---- Nav background on scroll ---- */
+        const nav = document.getElementById('nav');
+        addEventListener('scroll', () => {
+            if (scrollY > 40) {
+                nav.classList.add('backdrop-blur-md', 'py-0');
+                nav.style.background = 'rgba(44,38,32,.55)';
+            } else {
+                nav.classList.remove('backdrop-blur-md', 'py-0');
+                nav.style.background = 'transparent';
+            }
+        });
+
+        /* ---- Hero word reveal with GSAP ---- */
+        window.addEventListener('load', () => {
+            if (window.gsap) {
+                gsap.to('.hero-title .word > span', {
+                    y: '0%', duration: 1.1, ease: 'expo.out', stagger: .12, delay: .15
+                });
+            } else {
+                document.querySelectorAll('.hero-title .word > span').forEach(s => s.style.transform = 'none');
+            }
+
+            /* ---- Diferenciais — sticky storytelling ---- */
+            if (window.gsap && window.ScrollTrigger) {
+                gsap.registerPlugin(ScrollTrigger);
+
+                const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                if (!reduce) {
+                    gsap.utils.toArray('.story-step').forEach((step) => {
+                        gsap.fromTo(step.children,
+                            { opacity: 0, y: 60, filter: 'blur(10px)' },
+                            {
+                                opacity: 1, y: 0, filter: 'blur(0px)', stagger: .12, ease: 'power3.out',
+                                scrollTrigger: { trigger: step, start: 'top 65%', end: 'top 30%', scrub: 1.2 }
+                            }
+                        );
+                    });
+
+                    const storySection = document.getElementById('diferenciais');
+                    if (storySection) {
+                        gsap.to('#storyImg', {
+                            scale: 1.15, rotate: 2, ease: 'none',
+                            scrollTrigger: { trigger: storySection, start: 'top top', end: 'bottom bottom', scrub: 1.4 }
+                        });
+                        gsap.to('#storyGlow', {
+                            opacity: .5, scale: 1.3, ease: 'none',
+                            scrollTrigger: { trigger: storySection, start: 'top top', end: 'bottom bottom', scrub: 1.4 }
+                        });
+                    }
+                }
+
+                const storySection = document.getElementById('diferenciais');
+                const bar = document.getElementById('storyBar');
+                const pct = document.getElementById('storyPct');
+                if (storySection && bar && pct) {
+                    ScrollTrigger.create({
+                        trigger: storySection, start: 'top top', end: 'bottom bottom',
+                        onUpdate: (self) => {
+                            const p = Math.round(self.progress * 100);
+                            bar.style.width = p + '%';
+                            pct.textContent = String(p).padStart(2, '0');
+                        }
+                    });
+                }
+            }
+        });
+
+        /* ---- Serviços — LineSidebar (efeito de proximidade + troca de painel) ---- */
+        (function () {
+            const list = document.getElementById('serv-list');
+            const sidebar = document.getElementById('serv-sidebar');
+            if (!list || !sidebar) return;
+
+            const items = Array.from(list.querySelectorAll('li'));
+            const panels = Array.from(document.querySelectorAll('.serv-detail .serv-panel'));
+
+            const FALLOFF = { linear: p => p, smooth: p => p * p * (3 - 2 * p), sharp: p => p * p * p };
+            const ease = FALLOFF.smooth;
+            const proximityRadius = 120;   // px de influência vertical do cursor
+            const smoothing = 120;         // ms
+
+            const targets = items.map(() => 0);
+            const current = items.map(() => 0);
+            let activeIndex = 0;
+            let raf = null, last = 0;
+
+            function frame(now) {
+                const dt = Math.min((now - last) / 1000, 0.05);
+                last = now;
+                const tau = Math.max(smoothing, 1) / 1000;
+                const k = 1 - Math.exp(-dt / tau);
+
+                let moving = false;
+                for (let i = 0; i < items.length; i++) {
+                    const target = Math.max(targets[i], activeIndex === i ? 1 : 0);
+                    const cur = current[i];
+                    const next = cur + (target - cur) * k;
+                    const settled = Math.abs(target - next) < 0.0015;
+                    const value = settled ? target : next;
+                    current[i] = value;
+                    items[i].style.setProperty('--effect', value.toFixed(4));
+                    if (!settled) moving = true;
+                }
+                raf = moving ? requestAnimationFrame(frame) : null;
+            }
+
+            function start() {
+                if (raf != null) return;
+                last = performance.now();
+                raf = requestAnimationFrame(frame);
+            }
+
+            list.addEventListener('pointermove', (e) => {
+                const rect = list.getBoundingClientRect();
+                const pointerY = e.clientY - rect.top;
+                for (let i = 0; i < items.length; i++) {
+                    const el = items[i];
+                    const center = el.offsetTop + el.offsetHeight / 2;
+                    const distance = Math.abs(pointerY - center);
+                    targets[i] = ease(Math.max(0, 1 - distance / proximityRadius));
+                }
+                start();
+            });
+
+            list.addEventListener('pointerleave', () => {
+                for (let i = 0; i < targets.length; i++) targets[i] = 0;
+                start();
+            });
+
+            const TRANSITION_CLASSES = ['enter-up', 'enter-down', 'leave-up', 'leave-down', 'is-leaving'];
+            const panelByIndex = (i) => panels.find((p) => +p.dataset.panel === i);
+            let prevIndex = 0;
+
+            function activate(index) {
+                if (index === activeIndex) return;
+
+                const from = panelByIndex(prevIndex);
+                const to = panelByIndex(index);
+                // próximo abaixo do atual (índice maior) => sobe; próximo acima => desce
+                const goingDown = index > activeIndex;
+
+                activeIndex = index;
+                prevIndex = index;
+                items.forEach((el, i) => el.setAttribute('aria-current', i === index ? 'true' : 'false'));
+
+                if (to === from) { start(); return; }
+
+                // limpa qualquer transição em andamento (inclui restos de trocas rápidas)
+                panels.forEach((p) => {
+                    p.classList.remove(...TRANSITION_CLASSES);
+                    if (p !== to) p.classList.remove('is-active');
+                });
+
+                // remove as classes de transição de um painel de forma idempotente,
+                // via animationend E com um timeout de segurança (evita painel preso
+                // caso o evento não dispare)
+                function cleanup(panel, classes) {
+                    let done = false;
+                    const run = () => {
+                        if (done) return;
+                        done = true;
+                        panel.classList.remove(...classes);
+                        panel.removeEventListener('animationend', run);
+                    };
+                    panel.addEventListener('animationend', run);
+                    setTimeout(run, 550);
+                }
+
+                // painel que sai: permanece visível, sobreposto, e desliza na direção do que vem
+                if (from) {
+                    from.classList.remove('is-active');
+                    from.classList.add('is-leaving', goingDown ? 'leave-up' : 'leave-down');
+                    cleanup(from, ['is-leaving', 'leave-up', 'leave-down']);
+                }
+
+                // painel que entra: vem do lado oposto ao movimento
+                if (to) {
+                    to.classList.add('is-active', goingDown ? 'enter-up' : 'enter-down');
+                    cleanup(to, ['enter-up', 'enter-down']);
+                }
+
+                start();
+            }
+
+            items.forEach((el) => {
+                el.addEventListener('click', () => activate(+el.dataset.index));
+            });
+
+            start();
+        })();
+
+        /* ---- Depoimentos — Stack de cards arrastáveis (port vanilla do React Bits) ---- */
+        (function () {
+            const stage = document.getElementById('depo-stage');
+            const dotsWrap = document.getElementById('depo-dots');
+            if (!stage) return;
+
+            const SENSITIVITY = 140;      // px de arraste p/ mandar o card pro fundo
+            const RANDOM_ROTATION = true; // leve rotação "bagunçada" por card
+
+            // stack[0] = fundo … stack[último] = topo (o de cima é o interativo).
+            // invertemos a ordem do DOM para o 1º depoimento (Juliana) começar no topo
+            let stack = Array.from(stage.querySelectorAll('.depo-card')).reverse();
+            const total = stack.length;
+
+            // rotação aleatória fixa por card (não muda a cada render, evita "tremer")
+            const jitter = new Map();
+            stack.forEach((c) => jitter.set(c, RANDOM_ROTATION ? (Math.random() * 10 - 5) : 0));
+
+            // dots
+            const dots = [];
+            if (dotsWrap) {
+                stack.forEach((_, i) => {
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.setAttribute('role', 'tab');
+                    b.setAttribute('aria-label', 'Depoimento ' + (i + 1));
+                    b.addEventListener('click', () => goToCard(i));
+                    dotsWrap.appendChild(b);
+                    dots.push(b);
+                });
+            }
+
+            // posiciona cada card conforme sua profundidade na pilha
+            function render(animate = true) {
+                stack.forEach((card, index) => {
+                    const depth = total - index - 1;               // 0 = topo
+                    const rotate = depth * 4 + jitter.get(card);   // leque + jitter
+                    const scale = 1 + index * 0.06 - total * 0.06; // fundo menor
+                    card.style.zIndex = String(index + 1);
+                    card.classList.toggle('settling', animate);
+                    card.style.transform =
+                        `translate(0px, 0px) rotate(${rotate}deg) scale(${scale})`;
+                    // só o card do topo recebe interação
+                    card.style.pointerEvents = index === total - 1 ? 'auto' : 'none';
+                    card.setAttribute('aria-hidden', index === total - 1 ? 'false' : 'true');
+                });
+                syncDots();
+            }
+
+            function topCard() { return stack[total - 1]; }
+
+            function syncDots() {
+                const currentDepoIndex = +topCard().dataset.depo;
+                dots.forEach((d, i) =>
+                    d.setAttribute('aria-current', i === currentDepoIndex ? 'true' : 'false'));
+            }
+
+            // manda o card do topo para o fundo da pilha
+            function sendToBack() {
+                const top = stack.pop();
+                stack.unshift(top);
+                render(true);
+            }
+
+            // navega até um depoimento específico (usado pelos dots)
+            function goToCard(depoIndex) {
+                let guard = 0;
+                while (+topCard().dataset.depo !== depoIndex && guard++ < total) {
+                    const top = stack.pop();
+                    stack.unshift(top);
+                }
+                render(true);
+            }
+
+            // ---- drag / spring (equivalente ao CardRotate do motion) ----
+            let dragging = null;   // card sendo arrastado
+            let startX = 0, startY = 0, moved = false;
+
+            function onPointerDown(e) {
+                const card = e.target.closest('.depo-card');
+                if (!card || card !== topCard()) return;
+                dragging = card;
+                moved = false;
+                startX = e.clientX;
+                startY = e.clientY;
+                card.classList.remove('settling');
+                card.setPointerCapture?.(e.pointerId);
+            }
+
+            function onPointerMove(e) {
+                if (!dragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+
+                const depth = 0; // topo
+                const baseRotate = depth * 4 + jitter.get(dragging);
+                // tilt 3D leve, como o rotateX/rotateY do componente original
+                const tiltY = Math.max(-18, Math.min(18, dx / 8));
+                const tiltX = Math.max(-18, Math.min(18, -dy / 8));
+                dragging.style.transform =
+                    `translate(${dx}px, ${dy}px) rotate(${baseRotate}deg) ` +
+                    `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1)`;
+            }
+
+            function onPointerUp(e) {
+                if (!dragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                const card = dragging;
+                dragging = null;
+                card.releasePointerCapture?.(e.pointerId);
+
+                if (Math.abs(dx) > SENSITIVITY || Math.abs(dy) > SENSITIVITY) {
+                    sendToBack();                 // arraste forte → próximo card
+                } else if (!moved) {
+                    sendToBack();                 // toque/clique simples → próximo card
+                } else {
+                    render(true);                 // solta perto → volta com mola
+                }
+            }
+
+            stage.addEventListener('pointerdown', onPointerDown);
+            stage.addEventListener('pointermove', onPointerMove);
+            stage.addEventListener('pointerup', onPointerUp);
+            stage.addEventListener('pointercancel', onPointerUp);
+
+            // teclado: setas navegam (acessibilidade)
+            stage.tabIndex = 0;
+            stage.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    sendToBack();
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    // volta um: manda o do fundo pro topo
+                    const back = stack.shift();
+                    stack.push(back);
+                    render(true);
+                }
+            });
+
+            render(false);
+        })();
+
+        /* ---- Contato — pausa o vídeo do interior quando fora da tela ---- */
+        (function () {
+            const video = document.getElementById('cta-video-el');
+            if (!video) return;
+
+            // respeita quem prefere menos movimento: sem autoplay em loop
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                video.removeAttribute('autoplay');
+                video.removeAttribute('loop');
+                video.pause();
+                return;
+            }
+
+            // só reproduz enquanto a seção está visível (economiza bateria/CPU)
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach((e) => {
+                    if (e.isIntersecting) { video.play().catch(() => { }); }
+                    else { video.pause(); }
+                });
+            }, { threshold: 0.25 });
+            io.observe(video);
+        })();
+
+        /* ---- Contato — motor local que monta o plano ("IA") ---- */
+        (function () {
+            const form = document.getElementById('cta-form');
+            const input = document.getElementById('cta-input');
+            const char = document.getElementById('cta-char');
+            const submit = document.getElementById('cta-submit');
+            const plan = document.getElementById('cta-plan');
+            const planIntro = document.getElementById('cta-plan-intro');
+            const planList = document.getElementById('cta-plan-list');
+            if (!form || !input || !submit || !plan) return;
+
+            const label = submit.querySelector('.cta-submit__label');
+
+            /* Catálogo real da clínica (espelha a seção Tratamentos).
+               keywords = gatilhos no texto do lead; why = frase personalizada. */
+            const CATALOG = [
+                {
+                    id: 'limpeza',
+                    nome: 'Limpeza de Pele profunda',
+                    tag: 'Facial · ≈ 60 min',
+                    keywords: ['acne', 'espinha', 'cravo', 'oleos', 'oleosa', 'poro', 'pele',
+                        'rosto', 'face', 'facial', 'viço', 'vico', 'opaca', 'opaco', 'craquel',
+                        'textura', 'brilho', 'sebo', 'impureza', 'cravos'],
+                    why: 'Higienização com extração e ativos para desobstruir os poros e devolver o viço à sua pele.'
+                },
+                {
+                    id: 'laser',
+                    nome: 'Depilação a laser',
+                    tag: 'Corporal · Certificado Anvisa',
+                    keywords: ['pelo', 'pelos', 'depila', 'laser', 'perna', 'axila', 'buço',
+                        'buco', 'virilha', 'raspar', 'cera', 'lâmina', 'lamina', 'encravado',
+                        'encravados', 'barba'],
+                    why: 'Redução progressiva e duradoura dos pelos, com avaliação prévia e segurança para o seu fototipo.'
+                },
+                {
+                    id: 'massagem',
+                    nome: 'Massagem Modeladora',
+                    tag: 'Corporal · ≈ 50 min',
+                    keywords: ['gordura', 'gordurinha', 'celulite', 'medida', 'medidas',
+                        'barriga', 'abdomen', 'abdômen', 'contorno', 'modelar', 'modela',
+                        'flacidez', 'retenção', 'retencao', 'inchaç', 'inchac', 'inchado',
+                        'silhueta', 'corpo', 'corporal', 'emagrec', 'culote', 'coxa'],
+                    why: 'Manobras firmes que estimulam a circulação, reduzem retenção de líquido e ajudam a modelar o contorno.'
+                },
+                {
+                    id: 'sobrancelha',
+                    nome: 'Design de Sobrancelha',
+                    tag: 'Facial · ≈ 30 min',
+                    keywords: ['sobrancelha', 'sobrancelhas', 'olhar', 'simetria', 'design',
+                        'formato do rosto', 'falha', 'falhada', 'falhadas', 'rala', 'ralas'],
+                    why: 'Mapeamento do formato ideal para o seu rosto, com simetria e um acabamento delicado que realça o olhar.'
+                }
+            ];
+
+            // normaliza (minúsculo, sem acento) para casar palavras-chave
+            const norm = (s) => s.toLowerCase()
+                .normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+            function analyze(text) {
+                const t = norm(text);
+                const scored = CATALOG.map((svc) => {
+                    let score = 0;
+                    svc.keywords.forEach((kw) => { if (t.includes(norm(kw))) score += 1; });
+                    return { svc, score };
+                });
+                let hits = scored.filter((s) => s.score > 0)
+                    .sort((a, b) => b.score - a.score);
+                // nada casou → oferece uma avaliação ampla com os 2 carros-chefe
+                if (hits.length === 0) {
+                    hits = [scored[0], scored[2]];
+                }
+                return hits.map((h) => h.svc);
+            }
+
+            function buildIntro(text, services) {
+                const trimmed = text.trim().replace(/\s+/g, ' ');
+                const short = trimmed.length > 90 ? trimmed.slice(0, 90) + '…' : trimmed;
+                const n = services.length;
+                if (n === 1) {
+                    return 'Pelo que você contou (“' + short + '”), montamos um caminho ' +
+                        'focado em um tratamento principal. Veja a sugestão:';
+                }
+                if (n >= 3) {
+                    return 'Pelo que você contou (“' + short + '”), identificamos ' + n +
+                        ' frentes que se complementam — um plano combinado feito para o seu caso:';
+                }
+                return 'Pelo que você contou (“' + short + '”), sua avaliação começaria por ' +
+                    n + ' frentes que se complementam:';
+            }
+
+            function renderPlan(text) {
+                const services = analyze(text);
+                planIntro.textContent = buildIntro(text, services);
+                planList.innerHTML = '';
+                services.forEach((svc, i) => {
+                    const li = document.createElement('li');
+                    li.className = 'cta-plan__item';
+                    li.style.animationDelay = (i * 0.09).toFixed(2) + 's';
+                    li.innerHTML =
+                        '<span class="cta-plan__num">' + String(i + 1).padStart(2, '0') + '</span>' +
+                        '<span><span class="cta-plan__svc">' + svc.nome +
+                        ' <span style="font-weight:400;opacity:.6;font-size:.8em">· ' + svc.tag + '</span></span>' +
+                        '<span class="cta-plan__why">' + svc.why + '</span></span>';
+                    planList.appendChild(li);
+                });
+                plan.classList.add('is-open');
+                plan.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            // contador de caracteres + habilita botão
+            function refresh() {
+                const len = input.value.length;
+                char.textContent = len + ' / 600';
+                submit.disabled = input.value.trim().length < 3;
+            }
+            input.addEventListener('input', refresh);
+            refresh();
+
+            let busy = false;
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const text = input.value.trim();
+                if (text.length < 3 || busy) return;
+
+                busy = true;
+                submit.classList.add('is-loading');
+                submit.disabled = true;
+                if (label) label.textContent = 'Analisando…';
+
+                /* Simulação de processamento da IA. Para plugar um modelo real,
+                   troque este setTimeout por um fetch ao seu endpoint e chame
+                   renderPlan() (ou monte a lista) com a resposta. */
+                setTimeout(() => {
+                    renderPlan(text);
+                    submit.classList.remove('is-loading');
+                    if (label) label.textContent = 'Refazer meu plano';
+                    submit.disabled = false;
+                    busy = false;
+                }, 1100);
+            });
+        })();
+    </script>
+</body>
+
+</html>

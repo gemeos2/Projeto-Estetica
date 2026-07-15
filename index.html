@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Espaço Lumiè — Estética & Beleza</title>
+
+    <!-- Libraries (same as design system) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+
+    <!-- Fonts (same families as design system) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#3B322C',
+                        ink2: '#2C2620',
+                        cream: '#FAF7F5',
+                        cream2: '#F1EAE5',
+                        sand: '#EFE6DF',
+                        terra: '#D9B8A8',
+                        amber: '#E7CFC3',
+                        amber2: '#CBA592',
+                        bronze: '#B08C77',
+                        sage: '#7C8C6E',
+                        forest: '#5C6B50',
+                        rose: '#D9B8A8',
+                        gold: '#B08C77',
+                    },
+                    fontFamily: {
+                        serif: ['Fraunces', 'Playfair Display', 'serif'],
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <noscript>
+        <style>
+            [data-reveal] {
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important
+            }
+
+            .hero-title .word>span {
+                transform: none !important
+            }
+        </style>
+    </noscript>
+
+    <!-- ============================================================
+     STICKY NAV
+     ============================================================ -->
+    <header id="nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-500 text-cream">
+        <nav class="mx-auto max-w-7xl px-5 md:px-8 py-5">
+            <div class="flex items-center justify-between">
+                <!-- brand -->
+                <a href="#top" class="flex items-baseline gap-2">
+                    <span class="font-serif text-2xl tracking-tight">Espaço</span>
+                    <span class="font-serif italic text-terra text-xl">Lumiè</span>
+                </a>
+                <!-- links (center) -->
+                <div class="hidden md:flex items-center gap-10 opacity-90">
+                    <a class="nav-link" href="#home">Home</a>
+                    <a class="nav-link" href="#sobre">Sobre nós</a>
+                    <a class="nav-link" href="#servicos">Serviços</a>
+                    <a class="nav-link" href="#diferenciais">Diferenciais</a>
+                    <a class="nav-link" href="#depoimentos">Depoimentos</a>
+                    <a class="nav-link" href="#contato">Contato</a>
+                </div>
+                <!-- schedule button (right, desktop) -->
+                <a href="#contato" class="btn btn-solar py-2.5 px-6 text-sm hidden md:inline-flex">
+                    Agendar
+                    <iconify-icon class="ico" icon="solar:arrow-right-linear" width="16"></iconify-icon>
+                </a>
+
+                <!-- burger (mobile) -->
+                <button id="burger" class="md:hidden inline-flex items-center justify-center w-11 h-11 -mr-2"
+                    aria-label="Abrir menu" aria-expanded="false" aria-controls="mobile-menu">
+                    <iconify-icon class="burger-ico transition-transform duration-300"
+                        icon="solar:hamburger-menu-linear" width="26"></iconify-icon>
+                </button>
+            </div>
+        </nav>
+
+        <!-- mobile menu panel -->
+        <div id="mobile-menu"
+            class="md:hidden fixed inset-x-0 top-0 z-40 origin-top scale-y-0 opacity-0 pointer-events-none transition-all duration-400"
+            style="transition-timing-function:var(--ease-soft)">
+            <div class="card-glass pt-24 pb-8 px-6 text-ink">
+                <div class="flex flex-col gap-5 text-lg font-serif">
+                    <a class="mobile-link" href="#home">Home</a>
+                    <a class="mobile-link" href="#sobre">Sobre nós</a>
+                    <a class="mobile-link" href="#servicos">Serviços/a>
+                        <a class="mobile-link" href="#diferenciais">Diferenciais</a>
+                        <a class="mobile-link" href="#depoimentos">Depoimentos</a>
+                        <a class="mobile-link" href="#contato">Contato</a>
+                </div>
+                <a href="#contato" class="btn btn-solar mt-8 w-full justify-center">
+                    Agendar avaliação
+                    <iconify-icon class="ico" icon="solar:arrow-right-linear" width="16"></iconify-icon>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+     HERO / FIRST FOLD
+     ============================================================ -->
+    <section id="top" class="relative h-screen grain overflow-hidden flex flex-col">
+        <!-- background image -->
+        <div class="absolute inset-0 z-0">
+            <img src="ds-assets/backHero.webp" alt="Ritual de estética e cuidado com a pele"
+                class="w-full h-full object-cover" />
+            <!-- dark editorial overlays for text legibility -->
+            <div class="absolute inset-0"
+                style="background:linear-gradient(180deg,rgba(44,38,32,.55) 0%,rgba(44,38,32,.25) 30%,rgba(44,38,32,.55) 75%,rgba(44,38,32,.82) 100%)">
+            </div>
+            <div class="absolute inset-0"
+                style="background:radial-gradient(ellipse at 50% 40%, transparent 30%, rgba(44,38,32,.35) 100%)"></div>
+        </div>
+        <!-- soft aurora glow accents -->
+        <div class="aura-field" style="mix-blend-mode:screen;opacity:.5">
+            <div class="aura-blob b1"></div>
+            <div class="aura-blob b3"></div>
+        </div>
+
+        <!-- content -->
+        <div class="relative z-10 flex-1 flex items-center">
+            <div class="mx-auto max-w-5xl px-5 md:px-8 w-full text-center text-cream pt-28 pb-24">
+
+                <!-- eyebrow -->
+                <p class="eyebrow justify-center text-amber mb-8" data-reveal>
+                    Estética avançada &amp; bem-estar
+                </p>
+
+                <!-- headline -->
+                <h1
+                    class="hero-title font-serif leading-[.98] tracking-tight text-[8.5vw] md:text-[5.6rem] lg:text-[6.4rem]">
+                    <span class="word"><span>Sua beleza natural,</span></span><br>
+                    <span class="word italic shimmer-text"><span>realçada</span></span>
+                    <span class="word"><span>&nbsp;com ciência</span></span><br>
+                    <span class="word"><span>e cuidado.</span></span>
+                </h1>
+
+                <!-- subtitle -->
+                <p class="max-w-2xl mx-auto mt-8 text-lg md:text-xl leading-relaxed text-cream/85" data-reveal
+                    data-reveal-delay="2">
+                    Tratamentos faciais, corporais e depilação a laser com protocolos
+                    personalizados e acompanhamento profissional. Agende sua avaliação e
+                    descubra o que o seu corpo precisa.
+                </p>
+
+                <!-- CTAs -->
+                <div class="flex flex-wrap items-center justify-center gap-4 mt-10" data-reveal data-reveal-delay="3">
+                    <a href="#contato" class="btn btn-solar">
+                        Agendar avaliação gratuita
+                        <iconify-icon class="ico" icon="solar:arrow-right-linear" width="18"></iconify-icon>
+                    </a>
+                    <a href="#tratamentos" class="btn btn-ghost-light">
+                        Conhecer os tratamentos
+                    </a>
+                </div>
+
+                <!-- support line / trust seal -->
+                <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-12 text-sm text-cream/80"
+                    data-reveal data-reveal-delay="4">
+                    <span class="inline-flex items-center gap-2">
+                        <iconify-icon icon="solar:medal-ribbons-star-bold" width="17" class="text-terra"></iconify-icon>
+                        +8 anos de mercado
+                    </span>
+                    <span class="opacity-40">·</span>
+                    <span class="inline-flex items-center gap-2">
+                        <iconify-icon icon="solar:heart-bold" width="17" class="text-terra"></iconify-icon>
+                        +3.000 atendimentos
+                    </span>
+                    <span class="opacity-40">·</span>
+                    <span class="inline-flex items-center gap-2">
+                        <iconify-icon icon="solar:star-bold" width="17" class="text-terra"></iconify-icon>
+                        Nota 4,9 no Google
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- scroll cue -->
+        <div class="relative z-10 pb-6 flex flex-col items-center gap-2 text-cream/60">
+            <span class="text-[.7rem] tracking-[.25em] uppercase">Role</span>
+            <span class="scroll-cue"></span>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     SOBRE NÓS — Texto (esquerda) + imagem (direita)
+     ============================================================ -->
+    <section id="sobre" class="relative bg-cream py-24 md:py-32">
+        <div class="sobre-grid mx-auto max-w-7xl px-5 md:px-8">
+
+            <!-- coluna esquerda: texto -->
+            <div>
+                <p class="eyebrow text-bronze mb-6" data-reveal>
+                    Sobre nós
+                </p>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-ink mb-8"
+                    data-reveal data-reveal-delay="1">
+                    Cada atendimento começa com uma
+                    <span class="italic text-bronze">conversa</span>.
+                </h2>
+                <div class="space-y-5 text-ink/80 leading-relaxed md:text-lg" data-reveal data-reveal-delay="2">
+                    <p>
+                        No Espaço Lumiè, cada atendimento começa com uma conversa. Antes de
+                        qualquer procedimento, avaliamos sua pele, seus hábitos, sua rotina e
+                        os seus objetivos — porque não existe protocolo único que funcione
+                        para todo mundo.
+                    </p>
+                    <p>
+                        Trabalhamos com equipamentos certificados pela Anvisa, produtos de
+                        linha profissional e profissionais em formação contínua. Nosso
+                        compromisso não é te transformar em outra pessoa: é te fazer se
+                        sentir bem sendo quem você é.
+                    </p>
+                </div>
+            </div>
+
+            <!-- coluna direita: imagem -->
+            <div class="sobre-media" data-reveal data-reveal-delay="2">
+                <div class="sobre-media__frame">
+                    <picture>
+                        <source srcset="ds-assets/imgSobreNos.webp" type="image/webp" />
+                        <img src="ds-assets/imgSobreNos-opt.jpg" width="1400" height="1400" loading="lazy"
+                            decoding="async" alt="Profissional do Espaço Lumiè realizando um atendimento facial" />
+                    </picture>
+                </div>
+            </div>
+
+        </div><!-- /.sobre-grid -->
+    </section>
+
+    <!-- ============================================================
+     SERVIÇOS — LineSidebar com painel de detalhe
+     ============================================================ -->
+    <section id="servicos" class="relative bg-cream py-24 md:py-32">
+        <div class="mx-auto max-w-7xl px-5 md:px-8">
+
+            <!-- intro -->
+            <div class="max-w-2xl mb-16 md:mb-20">
+                <p class="eyebrow text-bronze mb-6" data-reveal>Serviços</p>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-ink"
+                    data-reveal data-reveal-delay="1">
+                    Tratamentos pensados para <span class="italic text-bronze">o seu tempo</span>.
+                </h2>
+            </div>
+
+            <div class="serv-grid">
+
+                <!-- coluna esquerda: LineSidebar -->
+                <nav class="line-sidebar" id="serv-sidebar" data-reveal aria-label="Lista de serviços">
+                    <ul id="serv-list">
+                        <li data-index="0" aria-current="true">
+                            <span class="marker" aria-hidden="true"></span>
+                            <span class="label"><span class="idx">01</span><span>Limpeza de Pele profunda</span></span>
+                        </li>
+                        <li data-index="1">
+                            <span class="marker" aria-hidden="true"></span>
+                            <span class="label"><span class="idx">02</span><span>Depilação a laser</span></span>
+                        </li>
+                        <li data-index="2">
+                            <span class="marker" aria-hidden="true"></span>
+                            <span class="label"><span class="idx">03</span><span>Massagem Modeladora</span></span>
+                        </li>
+                        <li data-index="3">
+                            <span class="marker" aria-hidden="true"></span>
+                            <span class="label"><span class="idx">04</span><span>Design de Sobrancelha</span></span>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- coluna direita: detalhe do serviço ativo -->
+                <div class="serv-detail" data-reveal data-reveal-delay="1">
+                    <div class="serv-panel is-active" data-panel="0">
+                        <div class="relative z-10">
+                            <iconify-icon icon="solar:magic-stick-3-bold" width="38"
+                                class="text-bronze mb-5"></iconify-icon>
+                            <h3 class="font-serif text-2xl md:text-3xl text-ink mb-4">Limpeza de Pele profunda</h3>
+                            <p class="text-ink/80 leading-relaxed md:text-lg mb-6">
+                                Higienização completa com extração, esfoliação e ativos de tratamento.
+                                Remove impurezas, desobstrui os poros e devolve o viço — com protocolo
+                                ajustado ao seu tipo de pele.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="pill">Facial</span>
+                                <span class="pill">≈ 60 min</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="serv-panel" data-panel="1">
+                        <div class="relative z-10">
+                            <iconify-icon icon="solar:bolt-bold" width="38" class="text-bronze mb-5"></iconify-icon>
+                            <h3 class="font-serif text-2xl md:text-3xl text-ink mb-4">Depilação a laser</h3>
+                            <p class="text-ink/80 leading-relaxed md:text-lg mb-6">
+                                Redução progressiva e duradoura dos pelos com equipamento certificado
+                                pela Anvisa. Seguro para diferentes fototipos, com avaliação prévia e
+                                acompanhamento a cada sessão.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="pill">Corporal</span>
+                                <span class="pill">Certificado Anvisa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="serv-panel" data-panel="2">
+                        <div class="relative z-10">
+                            <iconify-icon icon="solar:hand-shake-bold" width="38"
+                                class="text-bronze mb-5"></iconify-icon>
+                            <h3 class="font-serif text-2xl md:text-3xl text-ink mb-4">Massagem Modeladora</h3>
+                            <p class="text-ink/80 leading-relaxed md:text-lg mb-6">
+                                Manobras firmes que estimulam a circulação e ajudam a modelar o contorno
+                                corporal, reduzindo a retenção de líquidos. Ideal em conjunto com uma
+                                rotina de cuidados contínua.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="pill">Corporal</span>
+                                <span class="pill">≈ 50 min</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="serv-panel" data-panel="3">
+                        <div class="relative z-10">
+                            <iconify-icon icon="solar:pen-new-square-bold" width="38"
+                                class="text-bronze mb-5"></iconify-icon>
+                            <h3 class="font-serif text-2xl md:text-3xl text-ink mb-4">Design de Sobrancelha</h3>
+                            <p class="text-ink/80 leading-relaxed md:text-lg mb-6">
+                                Mapeamento do formato ideal para o seu rosto, com alinhamento, simetria e
+                                acabamento delicado. Realça o olhar respeitando os traços naturais de
+                                cada pessoa.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="pill">Facial</span>
+                                <span class="pill">≈ 30 min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     POR QUE ESCOLHER — Sticky story (imagem fixa + passos no scroll)
+     ============================================================ -->
+    <section class="relative bg-[#2C2620] text-cream" id="diferenciais">
+        <div class="mx-auto max-w-7xl px-5 md:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-20">
+
+                <!-- visual fixo (pinned) -->
+                <div class="lg:sticky lg:top-0 flex lg:h-screen items-center py-16 lg:py-0">
+                    <div class="relative w-full">
+                        <div class="pointer-events-none absolute -inset-10 rounded-full bg-bronze/15 blur-3xl"
+                            id="storyGlow"></div>
+                        <div class="relative overflow-hidden rounded-3xl">
+                            <img src="ds-assets/interior.png" alt="Interior da clínica Espaço Lumiè"
+                                class="h-80 sm:h-[30rem] w-full object-cover will-change-transform" id="storyImg"
+                                loading="lazy" decoding="async" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-ink2/60 via-transparent to-transparent">
+                            </div>
+                            <div class="absolute bottom-5 left-5 flex items-center gap-3">
+                                <span class="relative flex h-2.5 w-2.5 text-terra">
+                                    <span class="sonar absolute inset-0"></span>
+                                    <span class="relative h-2.5 w-2.5 rounded-full bg-terra"></span>
+                                </span>
+                                <p class="text-sm font-medium tracking-widest uppercase text-cream/80">
+                                    Espaço Lumiè · Clínica
+                                </p>
+                            </div>
+                        </div>
+                        <!-- progresso -->
+                        <div class="mt-6 flex items-center gap-3">
+                            <div class="h-1 flex-1 rounded-full bg-white/10 overflow-hidden">
+                                <div class="h-full w-0 rounded-full bg-bronze" id="storyBar"></div>
+                            </div>
+                            <p class="text-xs font-medium text-cream/40 tabular-nums">
+                                <span id="storyPct">00</span>&nbsp;%
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- passos -->
+                <div class="story-steps pb-16 lg:py-0">
+                    <!-- cabeçalho da seção -->
+                    <div class="story-step flex min-h-[50vh] lg:min-h-[60vh] flex-col justify-center">
+                        <p class="eyebrow text-terra mb-6">Por que a Lumiè</p>
+                        <h2
+                            class="font-serif text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.05]">
+                            Por que escolher a clínica
+                            <em class="font-light italic text-terra">Lumiè</em>?
+                        </h2>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Não vendemos promessas. Construímos confiança — com método,
+                            transparência e cuidado em cada detalhe do seu atendimento.
+                        </p>
+                    </div>
+
+                    <div class="story-step flex min-h-[70vh] lg:min-h-[75vh] flex-col justify-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-terra">
+                            01 — Avaliação personalizada
+                        </p>
+                        <h3 class="mt-4 font-serif text-4xl sm:text-5xl font-medium tracking-tight leading-[1.08]">
+                            Um plano feito
+                            <em class="font-light italic text-terra">para você</em>
+                        </h3>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Nenhum protocolo é aplicado sem uma avaliação prévia e um plano
+                            feito para você.
+                        </p>
+                    </div>
+
+                    <div class="story-step flex min-h-[70vh] lg:min-h-[75vh] flex-col justify-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-terra">
+                            02 — Equipamentos certificados
+                        </p>
+                        <h3 class="mt-4 font-serif text-4xl sm:text-5xl font-medium tracking-tight leading-[1.08]">
+                            Registrados na
+                            <em class="font-light italic text-terra">Anvisa</em>
+                        </h3>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Toda a nossa aparelhagem é registrada na Anvisa e passa por
+                            manutenção periódica.
+                        </p>
+                    </div>
+
+                    <div class="story-step flex min-h-[70vh] lg:min-h-[75vh] flex-col justify-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-terra">
+                            03 — Ambiente reservado e higienizado
+                        </p>
+                        <h3 class="mt-4 font-serif text-4xl sm:text-5xl font-medium tracking-tight leading-[1.08]">
+                            Biossegurança
+                            <em class="font-light italic text-terra">rigorosa</em>
+                        </h3>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Salas individuais, materiais descartáveis e protocolos rígidos
+                            de biossegurança.
+                        </p>
+                    </div>
+
+                    <div class="story-step flex min-h-[70vh] lg:min-h-[75vh] flex-col justify-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-terra">
+                            04 — Acompanhamento de resultados
+                        </p>
+                        <h3 class="mt-4 font-serif text-4xl sm:text-5xl font-medium tracking-tight leading-[1.08]">
+                            Sua evolução,
+                            <em class="font-light italic text-terra">sessão a sessão</em>
+                        </h3>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Registramos sua evolução sessão a sessão, com fotos e relatórios
+                            de progresso.
+                        </p>
+                    </div>
+
+                    <div class="story-step flex min-h-[70vh] lg:min-h-[75vh] flex-col justify-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-terra">
+                            05 — Sem enrolação
+                        </p>
+                        <h3 class="mt-4 font-serif text-4xl sm:text-5xl font-medium tracking-tight leading-[1.08]">
+                            Honestidade,
+                            <em class="font-light italic text-terra">simples assim</em>
+                        </h3>
+                        <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-cream/55">
+                            Se um tratamento não é indicado para você, nós dizemos. Simples
+                            assim.
+                        </p>
+                        <div class="mt-8">
+                            <a class="group inline-flex items-center gap-2 rounded-full bg-bronze px-6 py-3 text-sm font-medium text-cream transition-all hover:bg-terra hover:text-ink active:scale-95"
+                                href="#contato">
+                                Agendar avaliação gratuita
+                                <iconify-icon class="text-base transition-transform duration-300 group-hover:rotate-45"
+                                    icon="solar:arrow-right-up-bold-duotone"></iconify-icon>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     DEPOIMENTOS — Stack de cards arrastáveis
+     ============================================================ -->
+    <section id="depoimentos" class="relative bg-cream py-24 md:py-32 overflow-hidden">
+        <!-- aurora suave de fundo -->
+        <div class="aura-field" style="opacity:.4">
+            <div class="aura-blob b3"></div>
+        </div>
+
+        <div class="relative z-10 depo-grid mx-auto max-w-7xl px-5 md:px-8">
+
+            <!-- coluna esquerda: texto -->
+            <div>
+                <p class="eyebrow text-bronze mb-6" data-reveal>Depoimentos</p>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-ink mb-8"
+                    data-reveal data-reveal-delay="1">
+                    Quem passou por aqui
+                    <span class="italic text-bronze">conta</span>.
+                </h2>
+                <p class="text-ink/80 leading-relaxed md:text-lg max-w-md mb-8" data-reveal data-reveal-delay="2">
+                    Histórias reais de quem confiou o próprio cuidado à Lumiè. Arraste os
+                    cartões ou toque para ver o próximo depoimento.
+                </p>
+                <p class="depo-hint" data-reveal data-reveal-delay="3">
+                    <iconify-icon icon="solar:hand-shake-linear" width="18"></iconify-icon>
+                    Arraste ou clique para navegar
+                </p>
+
+                <!-- dots de progresso -->
+                <div class="depo-dots" id="depo-dots" role="tablist" aria-label="Selecionar depoimento" data-reveal
+                    data-reveal-delay="4"></div>
+            </div>
+
+            <!-- coluna direita: stack de cards -->
+            <div class="depo-stage" id="depo-stage" data-reveal data-reveal-delay="2" aria-live="polite">
+                <!-- 01 -->
+                <figure class="depo-card" data-depo="0">
+                    <div>
+                        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+                        <blockquote>
+                            Fiz limpeza de pele com a Camila e foi a primeira vez que saí de
+                            uma clínica sem irritação nenhuma. Já indiquei para minha irmã e
+                            minha mãe.
+                        </blockquote>
+                    </div>
+                    <figcaption>
+                        <span class="depo-avatar" aria-hidden="true">J</span>
+                        <span>
+                            <span class="depo-name">Juliana M.</span><br>
+                            <span class="depo-since">Cliente há 2 anos</span>
+                        </span>
+                    </figcaption>
+                </figure>
+
+                <!-- 02 -->
+                <figure class="depo-card" data-depo="1">
+                    <div>
+                        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+                        <blockquote>
+                            Comecei a depilação a laser com muito medo da dor e me surpreendi.
+                            Estou na 6ª sessão e a diferença é absurda.
+                        </blockquote>
+                    </div>
+                    <figcaption>
+                        <span class="depo-avatar" aria-hidden="true">P</span>
+                        <span>
+                            <span class="depo-name">Patrícia L.</span><br>
+                            <span class="depo-since">Cliente há 1 ano</span>
+                        </span>
+                    </figcaption>
+                </figure>
+
+                <!-- 03 -->
+                <figure class="depo-card" data-depo="2">
+                    <div>
+                        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+                        <blockquote>
+                            Atendimento humano de verdade. Elas lembram do seu nome, da sua
+                            rotina, do que você falou na última sessão.
+                        </blockquote>
+                    </div>
+                    <figcaption>
+                        <span class="depo-avatar" aria-hidden="true">R</span>
+                        <span>
+                            <span class="depo-name">Renata S.</span><br>
+                            <span class="depo-since">Cliente há 4 anos</span>
+                        </span>
+                    </figcaption>
+                </figure>
+
+                <!-- 04 -->
+                <figure class="depo-card" data-depo="3">
+                    <div>
+                        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+                        <blockquote>
+                            Fiz o pacote de massagem modeladora antes do casamento e o vestido
+                            caiu perfeito. Valeu cada sessão.
+                        </blockquote>
+                    </div>
+                    <figcaption>
+                        <span class="depo-avatar" aria-hidden="true">A</span>
+                        <span>
+                            <span class="depo-name">Amanda T.</span><br>
+                            <span class="depo-since">Cliente há 6 meses</span>
+                        </span>
+                    </figcaption>
+                </figure>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============================================================
+     CONTATO / CTA — Formulário (esquerda) + vídeo scroll (direita)
+     ============================================================ -->
+    <section id="contato" class="relative bg-cream py-24 md:py-32 overflow-hidden">
+        <!-- aurora suave de fundo -->
+        <div class="aura-field" style="opacity:.35">
+            <div class="aura-blob b1"></div>
+            <div class="aura-blob b2"></div>
+        </div>
+
+        <div class="relative z-10 mx-auto max-w-7xl px-5 md:px-8">
+
+            <!-- intro -->
+            <div class="max-w-2xl mb-14 md:mb-16">
+                <p class="eyebrow text-bronze mb-6" data-reveal>Avaliação gratuita</p>
+                <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-ink"
+                    data-reveal data-reveal-delay="1">
+                    Vamos começar pelo começo:
+                    <span class="italic text-bronze">uma avaliação</span>.
+                </h2>
+            </div>
+
+            <div class="cta-grid">
+
+                <!-- coluna esquerda: formulário -->
+                <div class="cta-form-card" data-reveal>
+                    <p class="cta-lead-note md:text-lg">
+                        A primeira consulta é <strong class="text-bronze">gratuita e sem
+                            compromisso</strong>. Você conta o que te incomoda, a gente avalia e
+                        monta um plano realista — com prazos e valores claros, do jeito que
+                        tem que ser.
+                    </p>
+
+                    <form id="cta-form" novalidate>
+                        <label for="cta-input" class="sr-only">O que você quer melhorar em você</label>
+                        <div class="cta-field">
+                            <textarea id="cta-input" name="mensagem" maxlength="600"
+                                placeholder="Digite aqui o que você quer melhorar em você"
+                                aria-describedby="cta-privacy"></textarea>
+                            <span class="cta-char" id="cta-char" aria-hidden="true">0 / 600</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-solar cta-submit" id="cta-submit" disabled>
+                            <span class="btn-spinner" aria-hidden="true"></span>
+                            <span class="cta-submit__label">Sugerir meu plano</span>
+                            <iconify-icon class="ico" icon="solar:magic-stick-3-bold" width="18"></iconify-icon>
+                        </button>
+
+                        <p class="cta-privacy" id="cta-privacy">
+                            <iconify-icon icon="solar:lock-keyhole-minimalistic-bold" width="14"></iconify-icon>
+                            Suas informações ficam entre você e a nossa equipe. Nada de spam.
+                        </p>
+                    </form>
+
+                    <!-- resultado gerado pela IA -->
+                    <div class="cta-plan" id="cta-plan" role="region" aria-live="polite" aria-label="Plano sugerido">
+                        <div class="cta-plan__head">
+                            <iconify-icon icon="solar:magic-stick-3-bold" width="22"></iconify-icon>
+                            <span class="cta-plan__title">Seu plano sugerido</span>
+                        </div>
+                        <p class="cta-plan__intro" id="cta-plan-intro"></p>
+                        <ul class="cta-plan__list" id="cta-plan-list"></ul>
+                        <div class="cta-plan__foot">
+                            <p class="cta-plan__disclaimer">
+                                Sugestão inicial gerada por IA. O plano final é definido na
+                                sua avaliação presencial ou online gratuita.
+                            </p>
+                            <a href="#contato" class="btn btn-solar py-2.5 px-6 text-sm" id="cta-plan-cta">
+                                Agendar avaliação
+                                <iconify-icon class="ico" icon="solar:arrow-right-linear" width="16"></iconify-icon>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- coluna direita: vídeo do interior do espaço -->
+                <div class="cta-video" id="cta-video" data-reveal data-reveal-delay="1">
+                    <video id="cta-video-el" autoplay muted loop playsinline preload="metadata"
+                        aria-label="Interior do Espaço Lumiè">
+                        <source src="ds-assets/video/videointerior.mp4" type="video/mp4" />
+                    </video>
+                    <div class="cta-video__overlay"></div>
+                    <div class="cta-video__caption">
+                        <p>Cada plano nasce de uma conversa — e de um cuidado pensado só para você.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     FOOTER
+     ============================================================ -->
+    <footer id="footer" class="relative overflow-hidden text-ink" style="background:var(--terra)">
+        <!-- soft aurora glow accents -->
+        <div class="aura-field" style="opacity:.35">
+            <div class="aura-blob b1"></div>
+            <div class="aura-blob b2"></div>
+        </div>
+
+        <div class="relative z-10 mx-auto max-w-7xl px-5 md:px-8 pt-20 pb-10">
+
+            <!-- top: brand + columns -->
+            <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+
+                <!-- brand + pitch -->
+                <div class="max-w-sm" data-reveal>
+                    <a href="#top" class="flex items-baseline gap-2 mb-5">
+                        <span class="font-serif text-3xl tracking-tight">Espaço</span>
+                        <span class="font-serif italic text-ink2 text-2xl">Lumiè</span>
+                    </a>
+                    <p class="text-ink/75 leading-relaxed">
+                        Estética avançada e bem-estar com protocolos personalizados.
+                        Cada atendimento começa com uma conversa — e um cuidado pensado só para você.
+                    </p>
+
+                    <!-- socials -->
+                    <div class="flex items-center gap-3 mt-7">
+                        <a href="#" aria-label="Instagram"
+                            class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-ink/10 hover:bg-ink hover:text-cream transition-colors duration-300">
+                            <iconify-icon icon="solar:gallery-round-bold" width="20"></iconify-icon>
+                        </a>
+                        <a href="#" aria-label="WhatsApp"
+                            class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-ink/10 hover:bg-ink hover:text-cream transition-colors duration-300">
+                            <iconify-icon icon="solar:chat-round-call-bold" width="20"></iconify-icon>
+                        </a>
+                        <a href="#" aria-label="Facebook"
+                            class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-ink/10 hover:bg-ink hover:text-cream transition-colors duration-300">
+                            <iconify-icon icon="solar:earth-bold" width="20"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- navegação -->
+                <div data-reveal data-reveal-delay="1">
+                    <p class="eyebrow text-ink2 mb-5">Navegação</p>
+                    <ul class="space-y-3 text-ink/80">
+                        <li><a class="nav-link" href="#home">Home</a></li>
+                        <li><a class="nav-link" href="#sobre">Sobre nós</a></li>
+                        <li><a class="nav-link" href="#tratamentos">Tratamentos</a></li>
+                        <li><a class="nav-link" href="#diferenciais">Diferenciais</a></li>
+                        <li><a class="nav-link" href="#depoimentos">Depoimentos</a></li>
+                    </ul>
+                </div>
+
+                <!-- serviços -->
+                <div data-reveal data-reveal-delay="2">
+                    <p class="eyebrow text-ink2 mb-5">Serviços</p>
+                    <ul class="space-y-3 text-ink/80">
+                        <li><a class="nav-link" href="#tratamentos">Limpeza de Pele</a></li>
+                        <li><a class="nav-link" href="#tratamentos">Depilação a laser</a></li>
+                        <li><a class="nav-link" href="#tratamentos">Massagem Modeladora</a></li>
+                        <li><a class="nav-link" href="#tratamentos">Design de Sobrancelha</a></li>
+                    </ul>
+                </div>
+
+                <!-- contato -->
+                <div data-reveal data-reveal-delay="3">
+                    <p class="eyebrow text-ink2 mb-5">Contato</p>
+                    <ul class="space-y-4 text-ink/80">
+                        <li class="flex items-start gap-3">
+                            <iconify-icon icon="solar:map-point-bold" width="18"
+                                class="text-ink2 mt-0.5 flex-none"></iconify-icon>
+                            <span>Rua das Flores, 123 — Centro<br>São Paulo, SP</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <iconify-icon icon="solar:phone-bold" width="18" class="text-ink2 flex-none"></iconify-icon>
+                            <a class="nav-link" href="tel:+5511999999999">(11) 99999-9999</a>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <iconify-icon icon="solar:letter-bold" width="18"
+                                class="text-ink2 flex-none"></iconify-icon>
+                            <a class="nav-link" href="mailto:contato@espacolumie.com.br">contato@espacolumie.com.br</a>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <iconify-icon icon="solar:clock-circle-bold" width="18"
+                                class="text-ink2 mt-0.5 flex-none"></iconify-icon>
+                            <span>Seg a Sex · 9h às 19h<br>Sáb · 9h às 14h</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- divider -->
+            <div
+                class="mt-16 pt-8 border-t border-ink/15 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-ink/70">
+                <p>© <span id="footer-year">2026</span> Espaço Lumiè. Todos os direitos reservados.</p>
+                <div class="flex items-center gap-6">
+                    <a class="nav-link" href="#">Política de Privacidade</a>
+                    <a class="nav-link" href="#">Termos de Uso</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+
+</html>

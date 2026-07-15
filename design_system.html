@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aurora Atelier — Design System</title>
+
+<!-- Same libraries the source templates use -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+
+<!-- Same font families used across veloura / grynnerup templates -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:      '#3B322C',   /* marrom escuro — textos */
+          ink2:     '#2C2620',   /* marrom mais profundo — blocos escuros */
+          cream:    '#FAF7F5',   /* off-white — fundo */
+          cream2:   '#F1EAE5',   /* off-white sombreado — seções alternadas */
+          sand:     '#EFE6DF',
+          terra:    '#D9B8A8',   /* nude/rosé — principal, acentos, botões */
+          amber:    '#E7CFC3',   /* nude claro — glow/detalhes */
+          amber2:   '#CBA592',   /* nude médio */
+          bronze:   '#B08C77',   /* nude escuro — hover/contraste */
+          sage:     '#7C8C6E',   /* verde-oliva suave — secundária/detalhes */
+          forest:   '#5C6B50',   /* oliva escuro */
+          rose:     '#D9B8A8',   /* nude/rosé (alias) */
+          gold:     '#B08C77',   /* nude escuro (alias p/ detalhes) */
+        },
+        fontFamily: {
+          serif: ['Fraunces', 'Playfair Display', 'serif'],
+          sans:  ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          mono:  ['IBM Plex Mono', 'ui-monospace', 'monospace'],
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  /* ============================================================
+     AURORA ATELIER — Design tokens
+     A creative synthesis of veloura-skincare (structure/position),
+     grynnerup-aesthetics (editorial polish) and bia-estetica
+     (dramatic dark bloc + oversized wordmark).
+     ============================================================ */
+  :root{
+    /* ---- Nova paleta ----
+       nude/rosé #D9B8A8 (principal/botões) · off-white #FAF7F5 (fundo)
+       verde-oliva #7C8C6E (secundária) · marrom escuro #3B322C (textos) */
+    --ink:#3B322C; --ink-2:#2C2620;
+    --cream:#FAF7F5; --cream-2:#F1EAE5; --sand:#EFE6DF;
+    --terra:#D9B8A8; --amber:#E7CFC3; --amber-2:#CBA592; --bronze:#B08C77;
+    --sage:#7C8C6E; --forest:#5C6B50; --rose:#D9B8A8; --gold:#B08C77;
+
+    --grad-sunrise: linear-gradient(135deg,#E7CFC3 0%,#D9B8A8 50%,#B08C77 100%);
+    --grad-halo:    radial-gradient(circle at 50% 40%, rgba(217,184,168,.6), rgba(176,140,119,.18) 40%, transparent 70%);
+    --grad-cream:   linear-gradient(180deg,#FAF7F5 0%,#F1EAE5 100%);
+
+    --ease-soft: cubic-bezier(.22,1,.36,1);
+    --ease-spring: cubic-bezier(.34,1.56,.64,1);
+
+    --shadow-card: 0 24px 60px -28px rgba(59,50,44,.35);
+    --shadow-float: 0 12px 34px -14px rgba(59,50,44,.28);
+    --radius: 22px;
+  }
+
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--amber);color:var(--ink)}
+
+  .font-serif{font-family:'Fraunces','Playfair Display',serif}
+  .font-mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+
+  /* ---- Grain / noise overlay (subtle editorial texture) ---- */
+  .grain::after{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;z-index:2;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ============================================================
+     BACKGROUND ANIMATIONS — reused across every fold
+     ============================================================ */
+  /* floating aurora blobs */
+  .aura-field{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .aura-blob{
+    position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;
+    animation:drift 22s var(--ease-soft) infinite alternate;
+    will-change:transform;
+  }
+  .aura-blob.b1{width:520px;height:520px;background:var(--grad-halo);top:-120px;left:-80px}
+  .aura-blob.b2{width:420px;height:420px;background:radial-gradient(circle,rgba(124,140,110,.38),transparent 70%);bottom:-140px;right:-60px;animation-duration:28s;animation-delay:-6s}
+  .aura-blob.b3{width:340px;height:340px;background:radial-gradient(circle,rgba(217,184,168,.4),transparent 70%);top:30%;right:20%;animation-duration:19s;animation-delay:-3s}
+  @keyframes drift{
+    0%  {transform:translate(0,0) scale(1)}
+    50% {transform:translate(40px,-30px) scale(1.12)}
+    100%{transform:translate(-30px,40px) scale(.95)}
+  }
+
+  /* slowly rotating conic sheen used on dark folds */
+  .conic-sheen::before{
+    content:"";position:absolute;inset:-40%;z-index:0;pointer-events:none;opacity:.35;
+    background:conic-gradient(from 0deg, transparent, rgba(217,184,168,.4), transparent 40%);
+    animation:spin 26s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* animated fine grid that breathes */
+  .grid-breathe{
+    position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;
+    background-image:linear-gradient(rgba(59,50,44,.05) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(59,50,44,.05) 1px,transparent 1px);
+    background-size:44px 44px;
+    -webkit-mask-image:radial-gradient(ellipse at center,#000 30%,transparent 75%);
+            mask-image:radial-gradient(ellipse at center,#000 30%,transparent 75%);
+    animation:breathe 9s ease-in-out infinite;
+  }
+  @keyframes breathe{0%,100%{opacity:.35;background-size:44px 44px}50%{opacity:.6;background-size:48px 48px}}
+
+  /* shimmering conic ring for hero product */
+  .halo-ring{
+    position:absolute;border-radius:50%;
+    background:conic-gradient(from 180deg,var(--amber),var(--terra),var(--sage),var(--amber));
+    filter:blur(2px);opacity:.9;animation:spin 12s linear infinite;
+  }
+
+  /* ============================================================
+     REVEAL ON SCROLL / ENTRANCE (surgimento)
+     ============================================================ */
+  [data-reveal]{opacity:0;transform:translateY(28px);filter:blur(6px);
+    transition:opacity .9s var(--ease-soft),transform .9s var(--ease-soft),filter .9s var(--ease-soft)}
+  [data-reveal].is-in{opacity:1;transform:none;filter:blur(0)}
+  [data-reveal-delay="1"]{transition-delay:.08s}
+  [data-reveal-delay="2"]{transition-delay:.16s}
+  [data-reveal-delay="3"]{transition-delay:.24s}
+  [data-reveal-delay="4"]{transition-delay:.32s}
+
+  /* per-word hero reveal */
+  .word{display:inline-block;overflow:hidden;vertical-align:top}
+  .word > span{display:inline-block;transform:translateY(110%);}
+
+  /* floating tags */
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .floaty{animation:floaty 5s ease-in-out infinite}
+  .floaty.d1{animation-delay:-1.5s}
+  .floaty.d2{animation-delay:-3s}
+
+  /* shimmer sweep on badges */
+  @keyframes shimmer{to{background-position:200% center}}
+  .shimmer-text{
+    background:linear-gradient(90deg,var(--bronze),var(--terra),var(--sage),var(--bronze));
+    background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:shimmer 5s linear infinite;
+  }
+
+  /* ============================================================
+     BUTTONS — the signature interactive component
+     ============================================================ */
+  .btn{
+    position:relative;display:inline-flex;align-items:center;gap:.6rem;
+    font-weight:500;font-size:.95rem;letter-spacing:.01em;
+    padding:.95rem 1.7rem;border-radius:999px;cursor:pointer;
+    transition:transform .35s var(--ease-spring),box-shadow .35s var(--ease-soft),background .35s;
+    overflow:hidden;border:1px solid transparent;isolation:isolate;
+  }
+  .btn:active{transform:scale(.96)}
+  .btn .ico{transition:transform .4s var(--ease-spring)}
+  .btn:hover .ico{transform:translateX(4px) rotate(0deg)}
+
+  /* primary — dark ink pill with sliding sheen */
+  .btn-primary{background:var(--ink);color:var(--cream);box-shadow:var(--shadow-float)}
+  .btn-primary::before{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background:var(--grad-sunrise);opacity:0;transition:opacity .4s var(--ease-soft);
+  }
+  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 18px 40px -14px rgba(176,140,119,.6);color:var(--ink)}
+  .btn-primary:hover::before{opacity:1}
+  .btn-primary::after{ /* light sweep */
+    content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;z-index:-1;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,.35),transparent);
+    transition:left .6s var(--ease-soft);
+  }
+  .btn-primary:hover::after{left:140%}
+
+  /* solar — nude/rosé gradient with soft glow pulse (texto marrom p/ contraste) */
+  .btn-solar{background:var(--grad-sunrise);color:var(--ink);font-weight:600;box-shadow:0 12px 30px -12px rgba(176,140,119,.6)}
+  .btn-solar:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 0 0 4px rgba(217,184,168,.35),0 18px 44px -14px rgba(176,140,119,.7)}
+
+  /* ghost — outline that fills on hover */
+  .btn-ghost{background:transparent;color:var(--ink);border-color:rgba(59,50,44,.25)}
+  .btn-ghost:hover{background:var(--ink);color:var(--cream);border-color:var(--ink);transform:translateY(-3px)}
+
+  /* soft — cream chip */
+  .btn-soft{background:rgba(255,255,255,.7);color:var(--ink);backdrop-filter:blur(8px);box-shadow:var(--shadow-float)}
+  .btn-soft:hover{background:#fff;transform:translateY(-3px)}
+
+  /* play button */
+  .btn-play{width:44px;height:44px;padding:0;border-radius:50%;background:var(--cream-2);color:var(--ink);
+    display:inline-grid;place-items:center;position:relative}
+  .btn-play::before{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--terra);
+    animation:pulse-ring 2.4s var(--ease-soft) infinite}
+  @keyframes pulse-ring{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.7);opacity:0}}
+
+  /* ============================================================
+     CARDS
+     ============================================================ */
+  .card{
+    background:#fff;border-radius:var(--radius);box-shadow:var(--shadow-card);
+    border:1px solid rgba(59,50,44,.06);overflow:hidden;position:relative;
+    transition:transform .5s var(--ease-soft),box-shadow .5s var(--ease-soft);
+  }
+  .card-hover:hover{transform:translateY(-8px);box-shadow:0 40px 80px -34px rgba(59,50,44,.5)}
+  .card-glass{background:rgba(255,255,255,.55);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.6)}
+
+  /* pill tag / badge */
+  .pill{
+    display:inline-flex;align-items:center;gap:.4rem;
+    padding:.4rem .85rem;border-radius:999px;font-size:.72rem;font-weight:600;
+    letter-spacing:.12em;text-transform:uppercase;
+    background:rgba(255,255,255,.85);color:var(--ink);box-shadow:var(--shadow-float);
+    backdrop-filter:blur(6px);
+  }
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--bronze);
+    box-shadow:0 0 0 3px rgba(217,184,168,.4);animation:blink 2s ease-in-out infinite}
+  @keyframes blink{50%{opacity:.35}}
+
+  .badge{display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .7rem;border-radius:8px;
+    font-size:.72rem;font-weight:600;letter-spacing:.04em}
+  .badge-terra{background:rgba(217,184,168,.28);color:var(--bronze)}
+  .badge-sage{background:rgba(124,140,110,.18);color:var(--forest)}
+  .badge-rose{background:rgba(217,184,168,.35);color:#8a6a56}
+  .badge-ink{background:var(--ink);color:var(--cream)}
+
+  /* ============================================================
+     INPUTS
+     ============================================================ */
+  .field{
+    width:100%;padding:.95rem 1.1rem;border-radius:14px;
+    background:#fff;border:1px solid rgba(59,50,44,.15);
+    font-size:.95rem;color:var(--ink);transition:border .3s,box-shadow .3s,transform .3s;
+    outline:none;
+  }
+  .field::placeholder{color:rgba(59,50,44,.4)}
+  .field:focus{border-color:var(--bronze);box-shadow:0 0 0 4px rgba(217,184,168,.4);transform:translateY(-1px)}
+  .field-group{position:relative}
+  .field-group iconify-icon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:rgba(59,50,44,.4)}
+  .field-group .field.with-ico{padding-left:2.7rem}
+
+  /* toggle */
+  .toggle{width:46px;height:26px;border-radius:999px;background:rgba(59,50,44,.2);position:relative;cursor:pointer;transition:background .3s}
+  .toggle::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .3s var(--ease-spring)}
+  .toggle.on{background:var(--terra)}
+  .toggle.on::after{left:23px}
+
+  /* ============================================================
+     NAV
+     ============================================================ */
+  .nav-link{position:relative;font-size:.92rem;color:var(--ink);opacity:.75;transition:opacity .3s}
+  .nav-link:hover{opacity:1}
+  .nav-link::after{content:"";position:absolute;left:0;bottom:-6px;height:2px;width:0;background:var(--bronze);transition:width .35s var(--ease-soft)}
+  .nav-link:hover::after{width:100%}
+
+  /* tooltip */
+  .tip{position:relative}
+  .tip .tip-body{
+    position:absolute;bottom:130%;left:50%;transform:translateX(-50%) translateY(6px);
+    background:var(--ink);color:var(--cream);font-size:.72rem;white-space:nowrap;
+    padding:.4rem .7rem;border-radius:8px;opacity:0;pointer-events:none;transition:.3s var(--ease-soft);
+  }
+  .tip .tip-body::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--ink)}
+  .tip:hover .tip-body{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* section label */
+  .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--bronze)}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--bronze)}
+
+  /* swatch */
+  .swatch{height:96px;border-radius:14px 14px 0 0}
+  .swatch-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow-float);border:1px solid rgba(59,50,44,.06);transition:transform .4s var(--ease-soft)}
+  .swatch-card:hover{transform:translateY(-6px)}
+
+  /* type specimen row */
+  .spec{border-top:1px solid rgba(59,50,44,.1)}
+
+  /* marquee */
+  .marquee{display:flex;gap:3rem;white-space:nowrap;animation:slide 26s linear infinite;will-change:transform}
+  @keyframes slide{to{transform:translateX(-50%)}}
+
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(44,38,32,.55);backdrop-filter:blur(6px);
+    display:none;place-items:center;z-index:80;padding:1.5rem}
+  .modal-backdrop.open{display:grid}
+  .modal-card{max-width:440px;width:100%;transform:scale(.92) translateY(14px);opacity:0;
+    transition:.45s var(--ease-spring)}
+  .modal-backdrop.open .modal-card{transform:none;opacity:1}
+
+  /* scroll cue */
+  .scroll-cue{width:26px;height:44px;border:2px solid rgba(59,50,44,.35);border-radius:14px;position:relative}
+  .scroll-cue::after{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:4px;height:8px;border-radius:2px;background:var(--terra);animation:cue 1.8s var(--ease-soft) infinite}
+  @keyframes cue{0%{opacity:0;top:8px}30%{opacity:1}100%{opacity:0;top:24px}}
+
+  .anchor{scroll-margin-top:90px}
+
+  /* Accessibility / no-JS: content must always be readable */
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+    [data-reveal]{opacity:1 !important;transform:none !important;filter:none !important}
+    .hero-title .word > span{transform:none !important}
+  }
+</style>
+</head>
+<body>
+<noscript><style>[data-reveal]{opacity:1!important;transform:none!important;filter:none!important}.hero-title .word>span{transform:none!important}</style></noscript>
+
+<!-- ============================================================
+     STICKY NAV  (veloura structure: brand · links · actions)
+     ============================================================ -->
+<header id="nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-500">
+  <nav class="mx-auto max-w-7xl px-5 mt-4">
+    <div class="card-glass flex items-center justify-between rounded-full pl-6 pr-3 py-2.5 shadow-lg">
+      <a href="#top" class="flex items-baseline gap-2">
+        <span class="font-serif text-xl tracking-tight">Aurora</span>
+        <span class="font-serif italic text-bronze text-lg">Atelier</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a class="nav-link" href="#type">Tipografia</a>
+        <a class="nav-link" href="#color">Cores</a>
+        <a class="nav-link" href="#components">Componentes</a>
+        <a class="nav-link" href="#icons">Ícones</a>
+        <a class="nav-link" href="#motion">Animações</a>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="btn-play tip hidden sm:grid" aria-label="Buscar">
+          <iconify-icon icon="solar:magnifer-linear" width="18"></iconify-icon>
+        </button>
+        <button class="btn btn-primary" onclick="openModal()">
+          Explorar <iconify-icon class="ico" icon="solar:arrow-right-up-linear" width="18"></iconify-icon>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ============================================================
+     1 · HERO / FIRST FOLD
+     ============================================================ -->
+<section id="top" class="relative min-h-screen grain overflow-hidden pt-28 pb-16"
+         style="background:var(--grad-cream)">
+  <!-- animated backgrounds -->
+  <div class="aura-field">
+    <div class="aura-blob b1"></div>
+    <div class="aura-blob b2"></div>
+    <div class="aura-blob b3"></div>
+  </div>
+  <div class="grid-breathe"></div>
+
+  <div class="relative z-10 mx-auto max-w-7xl px-5">
+    <!-- eyebrow badge -->
+    <div class="flex justify-center" data-reveal>
+      <span class="pill"><span class="dot"></span>Design System · Ritual de Beleza — 2025</span>
+    </div>
+
+    <!-- headline -->
+    <h1 class="hero-title mt-7 text-center font-serif leading-[.92] tracking-tight
+               text-[13vw] lg:text-[7.2rem]">
+      <span class="block">
+        <span class="word"><span>Radiância</span></span>
+        <span class="word italic text-bronze"><span>Atemporal</span></span>
+      </span>
+      <span class="block">
+        <span class="word italic shimmer-text"><span>Luminosa</span></span>
+        <span class="word"><span>&amp; Viva</span></span>
+      </span>
+    </h1>
+
+    <div class="mt-8 grid lg:grid-cols-[1.1fr,.9fr] gap-8 items-end">
+      <p class="max-w-md text-lg text-ink/70 leading-relaxed" data-reveal data-reveal-delay="2">
+        Uma linguagem visual botânica de absorção lenta — glow, calor âmbar e
+        rituais de pele que evocam sofisticação editorial e cuidado real.
+      </p>
+      <div class="flex flex-wrap items-center gap-4 lg:justify-end" data-reveal data-reveal-delay="3">
+        <button class="btn btn-solar">
+          Ver o ritual <iconify-icon class="ico" icon="solar:arrow-right-linear" width="18"></iconify-icon>
+        </button>
+        <button class="btn btn-ghost">
+          <span class="btn-play"><iconify-icon icon="solar:play-bold" width="16"></iconify-icon></span>
+          Assista
+        </button>
+      </div>
+    </div>
+
+    <!-- hero image row (veloura layout: portrait + product card) -->
+    <div class="mt-12 grid md:grid-cols-2 gap-5">
+      <!-- portrait -->
+      <div class="card card-hover group relative aspect-[16/11] md:aspect-auto md:h-[380px]" data-reveal data-reveal-delay="2">
+        <img src="ds-assets/hero-model.png" alt="Ritual de skincare"
+             class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.4s] group-hover:scale-105" />
+        <div class="absolute inset-0" style="background:linear-gradient(180deg,transparent 40%,rgba(59,50,44,.35))"></div>
+        <span class="pill floaty absolute top-4 left-4"><iconify-icon icon="solar:leaf-bold" width="13" class="text-sage"></iconify-icon>Botanical First</span>
+        <span class="pill floaty d2 absolute bottom-4 left-4"><iconify-icon icon="solar:star-bold" width="13" class="text-gold"></iconify-icon>Dermatologicamente testado</span>
+      </div>
+
+      <!-- product card -->
+      <div class="card card-hover group relative aspect-[16/11] md:aspect-auto md:h-[380px]" data-reveal data-reveal-delay="3">
+        <img src="ds-assets/serum-sunset.png" alt="Amber Glow Serum"
+             class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.4s] group-hover:scale-105" />
+        <!-- shimmering halo ring accent -->
+        <div class="halo-ring" style="width:120px;height:120px;top:24px;right:24px;opacity:.5"></div>
+        <div class="floaty absolute top-4 right-4 flex flex-col gap-2 items-end">
+          <span class="pill">Face Elixir</span>
+          <span class="pill d1 floaty">Body Milk</span>
+          <span class="pill d2 floaty">Skin Veil</span>
+        </div>
+        <!-- price plate -->
+        <div class="card-glass absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-2xl px-4 py-3">
+          <div>
+            <p class="font-serif text-lg leading-tight">Amber Glow Serum</p>
+            <p class="text-ink/60 text-sm">R$ 189,00</p>
+          </div>
+          <button class="btn btn-primary !py-2.5 !px-4 text-sm">
+            Comprar <iconify-icon class="ico" icon="solar:bag-3-bold" width="16"></iconify-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- stat / trust marquee strip -->
+    <div class="mt-10 overflow-hidden opacity-80" data-reveal data-reveal-delay="3">
+      <div class="marquee font-serif text-2xl italic text-ink/40">
+        <span>Skin · Shine · Renew</span><span>·</span><span>36h de hidratação</span><span>·</span>
+        <span>Origem natural</span><span>·</span><span>Feito em pequenos lotes</span><span>·</span>
+        <span>Skin · Shine · Renew</span><span>·</span><span>36h de hidratação</span><span>·</span>
+        <span>Origem natural</span><span>·</span><span>Feito em pequenos lotes</span><span>·</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-ink/50">
+    <span class="text-[.7rem] tracking-[.25em] uppercase">Role</span>
+    <span class="scroll-cue"></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     2 · TYPOGRAPHY
+     ============================================================ -->
+<section id="type" class="anchor relative py-24 overflow-hidden">
+  <div class="aura-field"><div class="aura-blob b3" style="opacity:.3"></div></div>
+  <div class="relative z-10 mx-auto max-w-7xl px-5">
+    <div class="max-w-2xl" data-reveal>
+      <span class="eyebrow">02 — Tipografia</span>
+      <h2 class="font-serif text-5xl md:text-6xl mt-4 leading-tight">O tom da voz<span class="italic text-bronze">.</span></h2>
+      <p class="text-ink/70 mt-4 text-lg">Fraunces (serif ótica, editorial) para títulos e momentos de emoção; Inter para corpo e interface. IBM Plex Mono para dados e etiquetas técnicas.</p>
+    </div>
+
+    <!-- font family cards -->
+    <div class="grid md:grid-cols-3 gap-5 mt-12">
+      <div class="card p-7" data-reveal data-reveal-delay="1">
+        <div class="flex items-center justify-between">
+          <span class="badge badge-terra">Primary · Display</span>
+          <span class="font-mono text-xs text-ink/50">300–700 · ital</span>
+        </div>
+        <p class="font-serif text-7xl mt-6 leading-none">Aa</p>
+        <p class="font-serif text-2xl mt-2">Fraunces</p>
+        <p class="text-ink/60 text-sm mt-3">CDN Google Fonts · opsz 9–144 · <span class="italic">italic para ênfase</span></p>
+      </div>
+      <div class="card p-7" data-reveal data-reveal-delay="2">
+        <div class="flex items-center justify-between">
+          <span class="badge badge-sage">Body · UI</span>
+          <span class="font-mono text-xs text-ink/50">300–700</span>
+        </div>
+        <p class="text-7xl mt-6 leading-none font-medium">Aa</p>
+        <p class="text-2xl mt-2 font-medium">Inter</p>
+        <p class="text-ink/60 text-sm mt-3">Fallback: ui-sans-serif, system-ui, sans-serif</p>
+      </div>
+      <div class="card p-7" data-reveal data-reveal-delay="3">
+        <div class="flex items-center justify-between">
+          <span class="badge badge-ink">Mono · Data</span>
+          <span class="font-mono text-xs text-ink/50">400–500</span>
+        </div>
+        <p class="font-mono text-7xl mt-6 leading-none">Aa</p>
+        <p class="font-mono text-2xl mt-2">IBM Plex Mono</p>
+        <p class="text-ink/60 text-sm mt-3">Etiquetas, preços, tokens e código</p>
+      </div>
+    </div>
+
+    <!-- type scale specimens -->
+    <div class="card mt-8 divide-y divide-ink/10" data-reveal>
+      <!-- header -->
+      <div class="hidden md:grid grid-cols-[1fr,auto] gap-4 px-7 py-4 text-xs font-mono uppercase tracking-widest text-ink/40">
+        <span>Specimen</span><span>família · peso · tamanho · line-height · tracking</span>
+      </div>
+      <!-- rows -->
+      <div class="grid md:grid-cols-[1fr,auto] gap-2 md:gap-4 px-7 py-6 items-baseline">
+        <p class="font-serif leading-none" style="font-size:4.5rem">H1 Radiância</p>
+        <p class="font-mono text-xs text-ink/50 md:text-right">Fraunces · 600 · 72px · 0.95 · -0.02em</p>
+      </div>
+      <div class="grid md:grid-cols-[1fr,auto] gap-2 md:gap-4 px-7 py-6 items-baseline">
+        <p class="font-serif leading-none" style="font-size:3rem">H2 Rituais</p>
+        <p class="font-mono text-xs text-ink/50 md:text-right">Fraunces · 500 · 48px · 1.05 · -0.015em</p>
+      </div>
+      <div class="grid md:grid-cols-[1fr,auto] gap-2 md:gap-4 px-7 py-6 items-baseline">
+        <p class="font-serif leading-tight" style="font-size:2rem">H3 Coleção Âmbar</p>
+        <p class="font-mono text-xs text-ink/50 md:text-right">Fraunces · 500 · 32px · 1.15 · -0.01em</p>
+      </div>
+      <div class="grid md:grid-cols-[1fr,auto] gap-2 md:gap-4 px-7 py-6 items-baseline">
+        <p class="leading-snug font-semibold" style="font-size:1.5rem">H4 Cuidado diário</p>
+        <p class="font-mono text-xs text-ink/50 md:text-right">Inter · 600 · 24px · 1.3 · -0.005em</p>
+      </div>
+      <div class="grid md:grid-cols-[1fr,auto] gap-2 md:gap-4 px-7 py-6 items-baseline">
+        <p class="leading-snug font-semibold" style="font-size:1.25rem">H5 Ingredientes ativos</p>
+        <p class="font-mono text-xs text-ink/50 md:text-right">Inter · 600 · 20px · 1.4 · 0</p>
+      </div>
+      <div class="grid md:grid-cols-[1fr,auto] gap-2 md:gap-4 px-7 py-6 items-baseline">
+        <p class="leading-snug font-semibold uppercase tracking-wide" style="font-size:1rem">H6 Seção</p>
+        <p class="font-mono text-xs text-ink/50 md:text-right">Inter · 600 · 16px · 1.5 · 0.04em · uppercase</p>
+      </div>
+      <div class="grid md:grid-cols-[1fr,auto] gap-2 md:gap-4 px-7 py-6 items-baseline">
+        <p style="font-size:1.125rem" class="text-ink/80">Body-LG — parágrafo de destaque com respiro generoso.</p>
+        <p class="font-mono text-xs text-ink/50 md:text-right">Inter · 400 · 18px · 1.7 · 0</p>
+      </div>
+      <div class="grid md:grid-cols-[1fr,auto] gap-2 md:gap-4 px-7 py-6 items-baseline">
+        <p style="font-size:1rem" class="text-ink/80">Body — texto padrão de leitura confortável para descrições.</p>
+        <p class="font-mono text-xs text-ink/50 md:text-right">Inter · 400 · 16px · 1.65 · 0</p>
+      </div>
+      <div class="grid md:grid-cols-[1fr,auto] gap-2 md:gap-4 px-7 py-6 items-baseline">
+        <p style="font-size:.875rem" class="text-ink/70">Body-SM — nota de apoio, metadados e legendas.</p>
+        <p class="font-mono text-xs text-ink/50 md:text-right">Inter · 400 · 14px · 1.6 · 0</p>
+      </div>
+      <div class="grid md:grid-cols-[1fr,auto] gap-2 md:gap-4 px-7 py-6 items-baseline">
+        <p class="text-xs uppercase tracking-[.18em] text-ink/50">Caption / Label · helper text</p>
+        <p class="font-mono text-xs text-ink/50 md:text-right">Inter · 500 · 12px · 1.5 · 0.18em · uppercase</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     3 · COLOR SYSTEM
+     ============================================================ -->
+<section id="color" class="anchor relative py-24 overflow-hidden" style="background:var(--cream-2)">
+  <div class="grid-breathe"></div>
+  <div class="relative z-10 mx-auto max-w-7xl px-5">
+    <div class="max-w-2xl" data-reveal>
+      <span class="eyebrow">03 — Sistema de Cores</span>
+      <h2 class="font-serif text-5xl md:text-6xl mt-4 leading-tight">Nude botânico<span class="italic text-bronze">.</span></h2>
+      <p class="text-ink/70 mt-4 text-lg">Base off-white acolhedora, acentos nude/rosé quentes e verde-oliva suave para detalhes. Marrom escuro profundo para textos com ótimo contraste.</p>
+    </div>
+
+    <!-- swatches -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12" id="swatches"></div>
+
+    <!-- gradients -->
+    <div class="grid md:grid-cols-3 gap-4 mt-6">
+      <div class="swatch-card" data-reveal data-reveal-delay="1">
+        <div class="swatch" style="background:var(--grad-sunrise)"></div>
+        <div class="p-4"><p class="font-medium">Nude</p><p class="font-mono text-xs text-ink/50 mt-1">135° · nude claro → rosé → escuro</p></div>
+      </div>
+      <div class="swatch-card" data-reveal data-reveal-delay="2">
+        <div class="swatch" style="background:var(--grad-halo)"></div>
+        <div class="p-4"><p class="font-medium">Halo Glow</p><p class="font-mono text-xs text-ink/50 mt-1">radial · nude 60% → transparent</p></div>
+      </div>
+      <div class="swatch-card" data-reveal data-reveal-delay="3">
+        <div class="swatch" style="background:linear-gradient(135deg,var(--forest),var(--sage))"></div>
+        <div class="p-4"><p class="font-medium">Botanical</p><p class="font-mono text-xs text-ink/50 mt-1">135° · oliva escuro → oliva</p></div>
+      </div>
+    </div>
+
+    <!-- role table -->
+    <div class="card mt-8 overflow-x-auto" data-reveal>
+      <table class="w-full text-sm min-w-[640px]">
+        <thead class="text-left font-mono text-xs uppercase tracking-widest text-ink/40">
+          <tr class="border-b border-ink/10">
+            <th class="px-6 py-4">Token</th><th class="px-6 py-4">Papel</th>
+            <th class="px-6 py-4">Uso contextual</th><th class="px-6 py-4">Contraste</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink/8">
+          <tr><td class="px-6 py-4"><span class="inline-block w-4 h-4 rounded align-middle mr-2" style="background:var(--ink)"></span>ink · marrom</td><td class="px-6 py-4">Neutral / texto</td><td class="px-6 py-4">Texto sobre off-white, bg de blocos escuros</td><td class="px-6 py-4 text-sage font-medium">AAA</td></tr>
+          <tr><td class="px-6 py-4"><span class="inline-block w-4 h-4 rounded align-middle mr-2" style="background:var(--terra)"></span>terra · nude/rosé</td><td class="px-6 py-4">Primary / accent</td><td class="px-6 py-4">Botões, acentos, halos, hover (texto marrom)</td><td class="px-6 py-4 text-bronze font-medium">AA*</td></tr>
+          <tr><td class="px-6 py-4"><span class="inline-block w-4 h-4 rounded align-middle mr-2" style="background:var(--bronze)"></span>bronze · nude escuro</td><td class="px-6 py-4">Accent forte</td><td class="px-6 py-4">Links, foco, texto de destaque sobre off-white</td><td class="px-6 py-4 text-bronze font-medium">AA</td></tr>
+          <tr><td class="px-6 py-4"><span class="inline-block w-4 h-4 rounded align-middle mr-2" style="background:var(--sage)"></span>sage · verde-oliva</td><td class="px-6 py-4">Secondary / detalhes</td><td class="px-6 py-4">Badges, feedback positivo, detalhes botânicos</td><td class="px-6 py-4 text-sage font-medium">AA</td></tr>
+          <tr><td class="px-6 py-4"><span class="inline-block w-4 h-4 rounded align-middle mr-2" style="background:var(--amber)"></span>amber · nude claro</td><td class="px-6 py-4">Decorative</td><td class="px-6 py-4">Glow, gradientes, seleção, halos</td><td class="px-6 py-4 text-ink/50">—</td></tr>
+          <tr><td class="px-6 py-4"><span class="inline-block w-4 h-4 rounded align-middle mr-2 border border-ink/10" style="background:var(--cream)"></span>cream · off-white</td><td class="px-6 py-4">Background</td><td class="px-6 py-4">Fundo base, superfícies claras, cards</td><td class="px-6 py-4 text-ink/50">base</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- opacity ramp -->
+    <div class="mt-8" data-reveal>
+      <p class="font-mono text-xs uppercase tracking-widest text-ink/40 mb-3">Nude/Rosé · variantes de opacidade</p>
+      <div class="flex rounded-2xl overflow-hidden shadow-md">
+        <div class="flex-1 h-16" style="background:rgba(217,184,168,1)"></div>
+        <div class="flex-1 h-16" style="background:rgba(217,184,168,.75)"></div>
+        <div class="flex-1 h-16" style="background:rgba(217,184,168,.5)"></div>
+        <div class="flex-1 h-16" style="background:rgba(217,184,168,.25)"></div>
+        <div class="flex-1 h-16" style="background:rgba(217,184,168,.1)"></div>
+      </div>
+      <div class="flex text-[.65rem] font-mono text-ink/50 mt-1 text-center"><span class="flex-1">100</span><span class="flex-1">75</span><span class="flex-1">50</span><span class="flex-1">25</span><span class="flex-1">10</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     4 · COMPONENTS
+     ============================================================ -->
+<section id="components" class="anchor relative py-24 overflow-hidden">
+  <div class="aura-field"><div class="aura-blob b1" style="opacity:.25"></div><div class="aura-blob b2" style="opacity:.25"></div></div>
+  <div class="relative z-10 mx-auto max-w-7xl px-5">
+    <div class="max-w-2xl" data-reveal>
+      <span class="eyebrow">04 — Componentes UI</span>
+      <h2 class="font-serif text-5xl md:text-6xl mt-4 leading-tight">Peças com alma<span class="italic text-bronze">.</span></h2>
+      <p class="text-ink/70 mt-4 text-lg">Cada componente carrega micro-interações: elevação, brilho deslizante, pulso e surgimento. Passe o mouse para senti-los.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6 mt-12">
+      <!-- Buttons -->
+      <div class="card p-8" data-reveal data-reveal-delay="1">
+        <p class="font-mono text-xs uppercase tracking-widest text-ink/40 mb-5">Buttons</p>
+        <div class="flex flex-wrap gap-3">
+          <button class="btn btn-primary">Primary <iconify-icon class="ico" icon="solar:arrow-right-linear" width="16"></iconify-icon></button>
+          <button class="btn btn-solar">Solar <iconify-icon class="ico" icon="solar:magic-stick-3-bold" width="16"></iconify-icon></button>
+          <button class="btn btn-ghost">Ghost</button>
+          <button class="btn btn-soft">Soft <iconify-icon icon="solar:heart-bold" width="16" class="text-rose"></iconify-icon></button>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 mt-4">
+          <button class="btn btn-primary opacity-40 cursor-not-allowed" disabled>Disabled</button>
+          <span class="btn-play"><iconify-icon icon="solar:play-bold" width="16"></iconify-icon></span>
+          <span class="text-sm text-ink/50">play c/ pulse-ring</span>
+        </div>
+      </div>
+
+      <!-- Inputs -->
+      <div class="card p-8" data-reveal data-reveal-delay="2">
+        <p class="font-mono text-xs uppercase tracking-widest text-ink/40 mb-5">Inputs</p>
+        <div class="space-y-4">
+          <div class="field-group">
+            <iconify-icon icon="solar:letter-linear" width="18"></iconify-icon>
+            <input class="field with-ico" placeholder="voce@email.com" />
+          </div>
+          <div class="field-group">
+            <input class="field" placeholder="Nome completo" />
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-ink/70">Receber o Journal semanal</span>
+            <span class="toggle on" onclick="this.classList.toggle('on')"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Badges + Tooltips -->
+      <div class="card p-8" data-reveal data-reveal-delay="1">
+        <p class="font-mono text-xs uppercase tracking-widest text-ink/40 mb-5">Badges &amp; Tooltips</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="badge badge-terra"><iconify-icon icon="solar:fire-bold" width="13"></iconify-icon>Best-seller</span>
+          <span class="badge badge-sage"><iconify-icon icon="solar:leaf-bold" width="13"></iconify-icon>Vegano</span>
+          <span class="badge badge-rose">Novo</span>
+          <span class="badge badge-ink">−20%</span>
+          <span class="pill"><span class="dot"></span>Em estoque</span>
+        </div>
+        <div class="flex gap-6 mt-6">
+          <span class="tip"><button class="btn btn-ghost !py-2 !px-4">Hover me<span class="tip-body">Tooltip escuro · surgimento suave</span></button></span>
+          <span class="tip"><span class="btn-play"><iconify-icon icon="solar:info-circle-linear" width="18"></iconify-icon><span class="tip-body">Informação do produto</span></span></span>
+        </div>
+      </div>
+
+      <!-- Product card -->
+      <div class="card card-hover group p-4" data-reveal data-reveal-delay="2">
+        <div class="relative rounded-2xl overflow-hidden h-48">
+          <img src="ds-assets/dew-cleanser.png" class="w-full h-full object-cover transition-transform duration-[1.2s] group-hover:scale-105" alt="Dew Cleanser" />
+          <span class="badge badge-ink absolute top-3 left-3">Editorial</span>
+        </div>
+        <div class="flex items-end justify-between mt-4 px-2 pb-1">
+          <div>
+            <p class="font-serif text-2xl leading-tight">Dew Cleanser</p>
+            <p class="text-ink/60 text-sm">Gentle · Hydrating · Radiant</p>
+          </div>
+          <button class="btn btn-solar !py-2 !px-4 text-sm">R$ 129</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navbar demo -->
+    <div class="mt-6" data-reveal>
+      <p class="font-mono text-xs uppercase tracking-widest text-ink/40 mb-3">Navbar (glass)</p>
+      <div class="card-glass flex items-center justify-between rounded-full pl-6 pr-3 py-2.5 shadow-lg">
+        <span class="font-serif text-lg">Aurora <span class="italic text-bronze">Atelier</span></span>
+        <div class="hidden md:flex gap-7"><a class="nav-link" href="#">Rituais</a><a class="nav-link" href="#">Loja</a><a class="nav-link" href="#">Journal</a></div>
+        <button class="btn btn-primary !py-2 !px-4 text-sm">Explorar</button>
+      </div>
+    </div>
+
+    <!-- Modal trigger -->
+    <div class="mt-6 flex items-center gap-4" data-reveal>
+      <button class="btn btn-primary" onclick="openModal()">Abrir Modal <iconify-icon class="ico" icon="solar:maximize-linear" width="16"></iconify-icon></button>
+      <span class="text-sm text-ink/50">backdrop blur + spring scale-in</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     EDITORIAL DARK BLOC  (bia-estetica: giant wordmark + list)
+     ============================================================ -->
+<section class="relative py-28 overflow-hidden conic-sheen grain" style="background:var(--ink-2);color:var(--cream)">
+  <div class="grid-breathe" style="opacity:.15"></div>
+  <div class="relative z-10 mx-auto max-w-7xl px-5">
+    <div class="grid lg:grid-cols-[1.4fr,1fr] gap-10 items-start">
+      <div data-reveal>
+        <span class="eyebrow" style="color:var(--amber)"><span></span></span>
+        <h2 class="font-serif text-5xl md:text-6xl leading-[1.05]">
+          Realçando sua beleza com <span class="italic shimmer-text">método</span>, calor e sensibilidade.
+        </h2>
+        <div class="flex flex-wrap gap-4 mt-8">
+          <button class="btn btn-solar">Agendar avaliação <iconify-icon class="ico" icon="solar:arrow-right-linear" width="16"></iconify-icon></button>
+          <button class="btn" style="background:rgba(250,247,245,.08);color:var(--cream);border:1px solid rgba(250,247,245,.2)">Ver protocolos</button>
+        </div>
+      </div>
+      <ul class="space-y-3 text-right lg:text-right" data-reveal data-reveal-delay="2">
+        <li class="text-2xl opacity-90 hover:opacity-100 hover:text-amber transition font-serif">Estratégia facial &amp; corporal</li>
+        <li class="text-2xl opacity-70 hover:opacity-100 hover:text-amber transition font-serif">Protocolos personalizados</li>
+        <li class="text-2xl opacity-55 hover:opacity-100 hover:text-amber transition font-serif">Rituais de glow âmbar</li>
+        <li class="text-2xl opacity-40 hover:opacity-100 hover:text-amber transition font-serif">Design de olhar</li>
+      </ul>
+    </div>
+    <!-- oversized wordmark -->
+    <h3 class="font-serif italic mt-16 leading-none tracking-tight text-[19vw] lg:text-[13rem] text-center"
+        style="background:linear-gradient(180deg,rgba(250,247,245,.9),rgba(250,247,245,.15));-webkit-background-clip:text;background-clip:text;color:transparent">
+      Aurora Atelier<span class="text-bronze not-italic" style="-webkit-text-fill-color:var(--bronze)">.</span>
+    </h3>
+  </div>
+</section>
+
+<!-- ============================================================
+     5 · ICONS  &  6 · ANIMATIONS
+     ============================================================ -->
+<section id="icons" class="anchor relative py-24 overflow-hidden" style="background:var(--cream-2)">
+  <div class="aura-field"><div class="aura-blob b3"></div></div>
+  <div class="relative z-10 mx-auto max-w-7xl px-5">
+    <div class="max-w-2xl" data-reveal>
+      <span class="eyebrow">05 — Ícones</span>
+      <h2 class="font-serif text-5xl md:text-6xl mt-4 leading-tight">Traço solar<span class="italic text-bronze">.</span></h2>
+      <p class="text-ink/70 mt-4 text-lg">Set <span class="font-mono text-sm">Solar</span> via <span class="font-mono text-sm">iconify-icon</span> — o mesmo utilizado nos templates. Linear para UI, bold para ênfase.</p>
+    </div>
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-8 gap-3 mt-10" id="icongrid"></div>
+  </div>
+</section>
+
+<section id="motion" class="anchor relative py-24 overflow-hidden">
+  <div class="grid-breathe"></div>
+  <div class="relative z-10 mx-auto max-w-7xl px-5">
+    <div class="max-w-2xl" data-reveal>
+      <span class="eyebrow">06 — Animações</span>
+      <h2 class="font-serif text-5xl md:text-6xl mt-4 leading-tight">Movimento vivo<span class="italic text-bronze">.</span></h2>
+      <p class="text-ink/70 mt-4 text-lg">Backgrounds em deriva, surgimento com blur, brilho deslizante e springs. Reutilizados em todas as dobras.</p>
+    </div>
+    <div class="grid md:grid-cols-4 gap-4 mt-12">
+      <div class="card p-6 h-44 relative overflow-hidden" data-reveal data-reveal-delay="1">
+        <div class="aura-field"><div class="aura-blob b1" style="width:200px;height:200px"></div></div>
+        <p class="relative z-10 font-serif text-xl">Aurora Drift</p>
+        <p class="relative z-10 font-mono text-xs text-ink/50 mt-2">.aura-blob · 22s</p>
+      </div>
+      <div class="card p-6 h-44 relative overflow-hidden" style="background:var(--ink);color:var(--cream)" data-reveal data-reveal-delay="2">
+        <div class="conic-sheen"></div>
+        <p class="relative z-10 font-serif text-xl">Conic Sheen</p>
+        <p class="relative z-10 font-mono text-xs opacity-60 mt-2">.conic-sheen · 26s</p>
+      </div>
+      <div class="card p-6 h-44 relative overflow-hidden grid place-items-center" data-reveal data-reveal-delay="3">
+        <div class="halo-ring" style="width:90px;height:90px"></div>
+        <div class="absolute w-[70px] h-[70px] rounded-full bg-white"></div>
+        <p class="absolute bottom-5 left-5 font-mono text-xs text-ink/50">.halo-ring · spin</p>
+      </div>
+      <div class="card p-6 h-44 relative overflow-hidden grid place-items-center" data-reveal data-reveal-delay="4">
+        <p class="shimmer-text font-serif text-4xl">Glow</p>
+        <p class="absolute bottom-5 left-5 font-mono text-xs text-ink/50">.shimmer-text</p>
+      </div>
+    </div>
+
+    <!-- easing reference -->
+    <div class="card mt-6 p-8 grid sm:grid-cols-2 gap-6" data-reveal>
+      <div>
+        <p class="font-mono text-xs uppercase tracking-widest text-ink/40 mb-2">Easing tokens</p>
+        <p class="font-mono text-sm text-ink/70">--ease-soft &nbsp; cubic-bezier(.22,1,.36,1)</p>
+        <p class="font-mono text-sm text-ink/70">--ease-spring &nbsp; cubic-bezier(.34,1.56,.64,1)</p>
+      </div>
+      <div>
+        <p class="font-mono text-xs uppercase tracking-widest text-ink/40 mb-2">Durações</p>
+        <p class="font-mono text-sm text-ink/70">reveal .9s · hover .35s · drift 22–28s</p>
+        <p class="font-mono text-sm text-ink/70">GSAP + ScrollTrigger para a hero</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     NEWSLETTER + FOOTER
+     ============================================================ -->
+<footer class="relative overflow-hidden pt-20 pb-10" style="background:var(--forest);color:var(--cream)">
+  <div class="conic-sheen"></div>
+  <div class="relative z-10 mx-auto max-w-7xl px-5">
+    <div class="grid lg:grid-cols-2 gap-10 items-center">
+      <div data-reveal>
+        <h3 class="font-serif text-4xl md:text-5xl leading-tight">Entre para o <span class="italic" style="color:var(--amber)">ritual</span>.</h3>
+        <p class="opacity-70 mt-3 max-w-md">Novidades, lançamentos e rituais de estação — direto no seu inbox.</p>
+      </div>
+      <form class="flex gap-3" data-reveal data-reveal-delay="2" onsubmit="return false">
+        <input class="field flex-1" placeholder="voce@email.com" style="background:rgba(250,247,245,.1);border-color:rgba(250,247,245,.25);color:var(--cream)" />
+        <button class="btn btn-solar">Assinar</button>
+      </form>
+    </div>
+    <div class="flex flex-wrap items-center justify-between gap-4 mt-14 pt-8 border-t border-cream/15 text-sm opacity-70">
+      <span class="font-serif text-lg">Aurora Atelier</span>
+      <div class="flex gap-5">
+        <iconify-icon icon="solar:letter-linear" width="20"></iconify-icon>
+        <iconify-icon icon="solar:phone-linear" width="20"></iconify-icon>
+        <iconify-icon icon="solar:map-point-linear" width="20"></iconify-icon>
+      </div>
+      <span>© 2025 Aurora Atelier — Design System</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     MODAL
+     ============================================================ -->
+<div class="modal-backdrop" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-card card p-8 text-center">
+    <div class="mx-auto w-14 h-14 rounded-full grid place-items-center mb-4" style="background:var(--grad-sunrise)">
+      <iconify-icon icon="solar:magic-stick-3-bold" width="26" class="text-white"></iconify-icon>
+    </div>
+    <h3 class="font-serif text-3xl">Bem-vinda ao Atelier</h3>
+    <p class="text-ink/60 mt-3">Componente modal com backdrop blur e entrada em spring. Feche clicando fora ou no botão.</p>
+    <div class="flex gap-3 justify-center mt-6">
+      <button class="btn btn-solar" onclick="closeModal()">Começar ritual</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ---- Swatch data ---- */
+  const swatches = [
+    ['Nude/Rosé','#D9B8A8','217,184,168','20 42% 75%'],
+    ['Off-white','#FAF7F5','250,247,245','24 20% 97%'],
+    ['Verde-oliva','#7C8C6E','124,140,110','92 12% 49%'],
+    ['Marrom escuro','#3B322C','59,50,44','28 15% 20%'],
+    ['Nude claro','#E7CFC3','231,207,195','20 44% 84%'],
+    ['Nude escuro','#B08C77','176,140,119','22 26% 58%'],
+    ['Oliva escuro','#5C6B50','92,107,80','94 14% 37%'],
+    ['Marrom profundo','#2C2620','44,38,32','30 16% 15%'],
+  ];
+  const dark = ['Marrom escuro','Verde-oliva','Oliva escuro','Marrom profundo'];
+  document.getElementById('swatches').innerHTML = swatches.map((s,i)=>`
+    <div class="swatch-card" data-reveal data-reveal-delay="${(i%4)+1}">
+      <div class="swatch" style="background:${s[1]}"></div>
+      <div class="p-4">
+        <p class="font-medium">${s[0]}</p>
+        <p class="font-mono text-[.7rem] text-ink/50 mt-1 leading-relaxed">
+          ${s[1]}<br>rgb(${s[2]})<br>hsl(${s[3]})
+        </p>
+      </div>
+    </div>`).join('');
+
+  /* ---- Icon grid (Solar set, same as templates) ---- */
+  const icons = ['solar:leaf-bold','solar:heart-bold','solar:star-bold','solar:fire-bold',
+    'solar:magic-stick-3-bold','solar:sun-bold','solar:moon-bold','solar:water-bold',
+    'solar:bag-3-linear','solar:cart-3-linear','solar:letter-linear','solar:phone-linear',
+    'solar:map-point-linear','solar:magnifer-linear','solar:user-linear','solar:heart-linear',
+    'solar:play-bold','solar:pause-bold','solar:arrow-right-linear','solar:arrow-right-up-linear',
+    'solar:info-circle-linear','solar:check-circle-bold','solar:calendar-linear','solar:clock-circle-linear'];
+  document.getElementById('icongrid').innerHTML = icons.map((ic,i)=>`
+    <div class="swatch-card grid place-items-center py-6 gap-2 group cursor-pointer" data-reveal data-reveal-delay="${(i%4)+1}">
+      <iconify-icon icon="${ic}" width="26" class="text-ink transition-transform duration-500 group-hover:scale-125 group-hover:text-bronze"></iconify-icon>
+      <span class="font-mono text-[.6rem] text-ink/40 truncate max-w-full px-1">${ic.split(':')[1]}</span>
+    </div>`).join('');
+
+  /* ---- Reveal on scroll ---- */
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target);} });
+  },{threshold:.12});
+  const observeAll = ()=>document.querySelectorAll('[data-reveal]:not(.is-in)').forEach(el=>io.observe(el));
+  observeAll();
+
+  /* Safety net: never leave content permanently hidden.
+     If anything is still un-revealed after load (JS-slow, no scroll,
+     reduced-motion, or IO edge cases) reveal it in place. */
+  const failsafe = ()=>document.querySelectorAll('[data-reveal]:not(.is-in)').forEach(el=>{
+    const r = el.getBoundingClientRect();
+    if(r.top < innerHeight * 1.1) el.classList.add('is-in');
+  });
+  addEventListener('scroll', failsafe, {passive:true});
+  addEventListener('load', ()=>setTimeout(()=>
+    document.querySelectorAll('[data-reveal]:not(.is-in)').forEach(el=>{
+      const r = el.getBoundingClientRect();
+      if(r.top < innerHeight) el.classList.add('is-in');
+    }), 400));
+
+  /* ---- Nav shrink on scroll ---- */
+  const nav = document.getElementById('nav');
+  addEventListener('scroll',()=>{ nav.classList.toggle('py-0', scrollY>40); });
+
+  /* ---- Modal ---- */
+  function openModal(){ document.getElementById('modal').classList.add('open'); }
+  function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+  /* ---- Hero word reveal with GSAP ---- */
+  window.addEventListener('load',()=>{
+    if(window.gsap){
+      gsap.to('.hero-title .word > span',{
+        y:'0%',duration:1.1,ease:'expo.out',stagger:.12,delay:.15
+      });
+    } else {
+      document.querySelectorAll('.hero-title .word > span').forEach(s=>s.style.transform='none');
+    }
+  });
+</script>
+</body>
+</html>
