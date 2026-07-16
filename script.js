@@ -129,8 +129,8 @@ window.addEventListener('load', () => {
                 if (!storySection || !steps.length) return;
 
                 const n = steps.length;
-                // pouco scroll por item (40% da tela) — uma rolada leve já passa
-                const perItem = 0.4;
+                // scroll bem curto por item (~18% da tela) — rolada leve já passa
+                const perItem = 0.18;
 
                 // mostra o primeiro item já de início
                 steps.forEach((s, i) => s.classList.toggle('is-active', i === 0));
@@ -166,8 +166,8 @@ window.addEventListener('load', () => {
                     // de modo que qualquer rolada leve avança para o próximo tópico
                     snap: {
                         snapTo: 1 / (n - 1),
-                        duration: { min: 0.2, max: 0.4 },
-                        delay: 0.05,
+                        duration: { min: 0.15, max: 0.35 },
+                        delay: 0,          // encaixa assim que o gesto termina
                         ease: 'power1.inOut'
                     },
                     onUpdate: (self) => {
