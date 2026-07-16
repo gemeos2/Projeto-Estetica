@@ -471,7 +471,7 @@ SOBRE NÓS — Texto (esquerda) + imagem (direita)
     /* hero um pouco menor que a tela cheia no mobile,
        deixando aparecer mais da foto / próxima seção */
     #top {
-        height: 95vh !important;
+        height: 90vh !important;
     }
 
     /* ícone "X" de fechar o menu (mobile) — cor escura p/ contrastar
