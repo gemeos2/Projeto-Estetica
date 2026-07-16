@@ -426,6 +426,11 @@ window.addEventListener('load', () => {
     const SENSITIVITY = 140;      // px de arraste p/ mandar o card pro fundo
     const RANDOM_ROTATION = true; // leve rotação "bagunçada" por card
 
+    // ângulo dos cards — mais reto no mobile (leque e "bagunça" reduzidos)
+    const isMobile = matchMedia('(max-width: 860px)').matches;
+    const FAN = isMobile ? 2 : 4;                 // graus por profundidade (leque)
+    const JITTER_RANGE = isMobile ? 4 : 10;       // amplitude da rotação aleatória
+
     // stack[0] = fundo … stack[último] = topo (o de cima é o interativo).
     // invertemos a ordem do DOM para o 1º depoimento (Juliana) começar no topo
     let stack = Array.from(stage.querySelectorAll('.depo-card')).reverse();
@@ -433,7 +438,7 @@ window.addEventListener('load', () => {
 
     // rotação aleatória fixa por card (não muda a cada render, evita "tremer")
     const jitter = new Map();
-    stack.forEach((c) => jitter.set(c, RANDOM_ROTATION ? (Math.random() * 10 - 5) : 0));
+    stack.forEach((c) => jitter.set(c, RANDOM_ROTATION ? (Math.random() * JITTER_RANGE - JITTER_RANGE / 2) : 0));
 
     // dots
     const dots = [];
@@ -453,7 +458,7 @@ window.addEventListener('load', () => {
     function render(animate = true) {
         stack.forEach((card, index) => {
             const depth = total - index - 1;               // 0 = topo
-            const rotate = depth * 4 + jitter.get(card);   // leque + jitter
+            const rotate = depth * FAN + jitter.get(card); // leque + jitter
             const scale = 1 + index * 0.06 - total * 0.06; // fundo menor
             card.style.zIndex = String(index + 1);
             card.classList.toggle('settling', animate);
@@ -513,7 +518,7 @@ window.addEventListener('load', () => {
         if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
 
         const depth = 0; // topo
-        const baseRotate = depth * 4 + jitter.get(dragging);
+        const baseRotate = depth * FAN + jitter.get(dragging);
         // tilt 3D leve, como o rotateX/rotateY do componente original
         const tiltY = Math.max(-18, Math.min(18, dx / 8));
         const tiltX = Math.max(-18, Math.min(18, -dy / 8));

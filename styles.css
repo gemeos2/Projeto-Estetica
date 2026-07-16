@@ -945,6 +945,12 @@ DEPOIMENTOS — Stack de cards arrastáveis (adaptado do React Bits)
     .depo-stage {
         width: min(100%, 22rem);
     }
+
+    /* centraliza a pilha: com origem no centro, os cards de trás
+       reduzem simetricamente (não "vazam" para o canto inferior direito) */
+    .depo-card {
+        transform-origin: 50% 50%;
+    }
 }
 
 /* ============================================================
