@@ -30,10 +30,6 @@ ESPAÇO LUMIÈ — Design tokens (from design_system.html)
 
 html {
     scroll-behavior: smooth;
-    /* proximity: só "encaixa" quando perto de um ponto de snap
-       (os .story-step da seção "Por que escolher") — o restante do
-       site continua rolando livremente */
-    scroll-snap-type: y proximity;
 }
 
 body {
@@ -456,15 +452,6 @@ SOBRE NÓS — Texto (esquerda) + imagem (direita)
         grid-row: auto;
     }
 
-    /* impede vazamento horizontal no mobile (blobs de aurora, etc.)
-       que empurravam o botão do menu para fora da tela.
-       Usa clip (não hidden) p/ NÃO criar contexto de scroll — assim o
-       position:sticky da seção "Por que escolher" continua funcionando. */
-    html,
-    body {
-        overflow-x: clip;
-    }
-
     /* subtítulo do hero em 1rem no mobile */
     .hero-subtitle {
         font-size: 1rem !important;
@@ -539,6 +526,11 @@ SOBRE NÓS — Texto (esquerda) + imagem (direita)
 
     #burger .burger-close {
         color: var(--ink);
+    }
+
+    /* painel do menu mobile um pouco mais opaco (melhora a leitura) */
+    #mobile-menu .card-glass {
+        background: rgba(255, 255, 255, .82);
     }
 }
 
@@ -780,7 +772,7 @@ SERVIÇOS — LineSidebar (efeito de proximidade do cursor)
     }
 
     .line-sidebar {
-        --font-size: 1.4rem;
+        --font-size: 1.15rem;
         --marker-length: 44px;
     }
 
@@ -980,16 +972,6 @@ POR QUE ESCOLHER — Sticky story (imagem fixa + passos no scroll)
 
 .sonar::after {
     animation-delay: 1.2s;
-}
-
-/* ---- scroll-snap por passo ----
-   cada .story-step é um ponto de ancoragem: ao rolar, a página
-   "encaixa" no passo mais próximo em vez de exigir rolagem contínua
-   até o título ficar no centro */
-#diferenciais .story-step {
-    scroll-snap-align: center;
-    scroll-snap-stop: always;
-    /* não deixa pular 2 passos num gesto */
 }
 
 /* respiro de meia-tela no topo e no fim da coluna de passos:

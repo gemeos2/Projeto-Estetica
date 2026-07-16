@@ -52,6 +52,39 @@ addEventListener('load', () => setTimeout(() =>
     addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
 })();
 
+/* ---- Navegação por âncora: deixa o scroll ATRAVESSAR o slider ----
+   Ao clicar num link "#secao", liga um "bypass" para que a seção
+   "Por que a Lumiè" não capture/trave o scroll no caminho até o destino.
+   O bypass desliga quando a rolagem chega ao alvo. */
+(function () {
+    let bypassTimer = null;
+    function beginBypass() {
+        window.__storyBypass = true;
+        // garante que a seção não fique travada agora
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        clearTimeout(bypassTimer);
+        // desliga quando o scroll estabilizar (fallback de segurança)
+        let lastY = -1, still = 0;
+        (function watch() {
+            const y = window.scrollY;
+            if (y === lastY) { still++; } else { still = 0; lastY = y; }
+            if (still >= 4) { window.__storyBypass = false; return; }   // parou
+            bypassTimer = setTimeout(watch, 80);
+        })();
+        // teto absoluto: nunca fica preso
+        setTimeout(() => { window.__storyBypass = false; }, 2000);
+    }
+
+    document.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href^="#"]');
+        if (!a) return;
+        const id = a.getAttribute('href').slice(1);
+        if (!id || !document.getElementById(id)) return;   // âncora inválida
+        beginBypass();
+    }, true);   // captura: roda antes de outros handlers
+})();
+
 /* ---- Nav background on scroll ---- */
 const nav = document.getElementById('nav');
 addEventListener('scroll', () => {
@@ -172,6 +205,7 @@ window.addEventListener('load', () => {
                 }
                 // reforço: se um flick forte escapar, puxa de volta à posição travada
                 function onScrollGuard() {
+                    if (window.__storyBypass) return;   // navegação por link: deixa passar
                     if (locked && Math.abs(window.scrollY - lockedY) > 1) {
                         window.scrollTo(0, lockedY);
                     }
@@ -186,6 +220,9 @@ window.addEventListener('load', () => {
                     start: 'top top',
                     end: 'bottom top',
                     onToggle: (self) => {
+                        // durante navegação por link do menu, não captura o scroll:
+                        // deixa a página rolar através da seção até o destino
+                        if (window.__storyBypass) { lock(false); return; }
                         if (self.isActive) {
                             // alinha a seção ao topo e trava o scroll
                             const y = storySection.getBoundingClientRect().top + window.scrollY;
