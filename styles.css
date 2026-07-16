@@ -468,6 +468,12 @@ SOBRE NÓS — Texto (esquerda) + imagem (direita)
         font-size: 1rem !important;
     }
 
+    /* hero um pouco menor que a tela cheia no mobile,
+       deixando aparecer mais da foto / próxima seção */
+    #top {
+        height: 95vh !important;
+    }
+
     /* ícone "X" de fechar o menu (mobile) — cor escura p/ contrastar
        com o painel claro card-glass, e acima dele */
     #burger.open {
