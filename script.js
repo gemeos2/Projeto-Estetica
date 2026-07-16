@@ -23,13 +23,27 @@ addEventListener('load', () => setTimeout(() =>
     const menu = document.getElementById('mobile-menu');
     if (!burger || !menu) return;
     const ico = burger.querySelector('.burger-ico');
+    // Ícone "X" (fechar) — ds-assets/icone/menu sanduiche sair.svg, inline p/ herdar a cor
+    const closeSvg =
+        '<svg class="burger-close" width="22" height="22" viewBox="0 0 322 315" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        '<line x1="28.2843" y1="20" x2="294.156" y2="285.872" stroke="currentColor" stroke-width="40" stroke-linecap="round"/>' +
+        '<line x1="20" y1="-20" x2="396" y2="-20" transform="matrix(-0.707107 0.707107 0.707107 0.707107 321.68 20.0771)" stroke="currentColor" stroke-width="40" stroke-linecap="round"/>' +
+        '</svg>';
 
     function setOpen(open) {
         burger.classList.toggle('open', open);
         menu.classList.toggle('open', open);
         burger.setAttribute('aria-expanded', open ? 'true' : 'false');
         burger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
-        if (ico) ico.setAttribute('icon', open ? 'solar:close-square-linear' : 'solar:hamburger-menu-linear');
+        // troca hamburger <-> X (svg inline)
+        if (open) {
+            if (ico) ico.style.display = 'none';
+            if (!burger.querySelector('.burger-close')) burger.insertAdjacentHTML('beforeend', closeSvg);
+        } else {
+            if (ico) ico.style.display = '';
+            const x = burger.querySelector('.burger-close');
+            if (x) x.remove();
+        }
         document.body.style.overflow = open ? 'hidden' : '';
     }
 

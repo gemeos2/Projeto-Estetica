@@ -455,6 +455,29 @@ SOBRE NÓS — Texto (esquerda) + imagem (direita)
         grid-column: auto;
         grid-row: auto;
     }
+
+    /* impede vazamento horizontal no mobile (blobs de aurora, etc.)
+       que empurravam o botão do menu para fora da tela */
+    html,
+    body {
+        overflow-x: hidden;
+    }
+
+    /* subtítulo do hero em 1rem no mobile */
+    .hero-subtitle {
+        font-size: 1rem !important;
+    }
+
+    /* ícone "X" de fechar o menu (mobile) — cor escura p/ contrastar
+       com o painel claro card-glass, e acima dele */
+    #burger.open {
+        position: relative;
+        z-index: 60;
+    }
+
+    #burger .burger-close {
+        color: var(--ink);
+    }
 }
 
 /* ============================================================
