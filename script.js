@@ -123,12 +123,14 @@ window.addEventListener('load', () => {
                 }
             },
 
-            /* ===== MOBILE: pin da seção + itens um por vez (slide-up) ===== */
+            /* ===== MOBILE: pin + snap — 1 gesto de scroll = 1 tópico ===== */
             '(max-width: 860px)': function () {
                 const steps = gsap.utils.toArray('.story-steps > .story-step');
                 if (!storySection || !steps.length) return;
 
                 const n = steps.length;
+                // pouco scroll por item (40% da tela) — uma rolada leve já passa
+                const perItem = 0.4;
 
                 // mostra o primeiro item já de início
                 steps.forEach((s, i) => s.classList.toggle('is-active', i === 0));
@@ -139,11 +141,9 @@ window.addEventListener('load', () => {
                     const prev = steps[current];
                     const next = steps[idx];
                     const goingDown = idx > current;
-                    // item que sai desliza p/ cima (ou p/ baixo se voltando)
                     gsap.to(prev, {
                         opacity: 0, y: goingDown ? -40 : 40, duration: .45, ease: 'power2.inOut'
                     });
-                    // item que entra vem de baixo (ou de cima se voltando)
                     gsap.fromTo(next,
                         { opacity: 0, y: goingDown ? 40 : -40 },
                         { opacity: 1, y: 0, duration: .5, ease: 'power2.out' }
@@ -156,18 +156,23 @@ window.addEventListener('load', () => {
                 ScrollTrigger.create({
                     trigger: storySection,
                     start: 'top top',
-                    // (n-1) telas de scroll — reavaliado a cada refresh para
-                    // acompanhar mudanças de altura da viewport
-                    end: () => '+=' + ((n - 1) * window.innerHeight),
+                    // distância curta: (n-1) * (fração de uma tela) por item
+                    end: () => '+=' + ((n - 1) * window.innerHeight * perItem),
                     pin: true,
                     pinSpacing: true,
-                    scrub: false,
                     anticipatePin: 1,
                     invalidateOnRefresh: true,
+                    // snap: encaixa magneticamente no item mais próximo ao soltar,
+                    // de modo que qualquer rolada leve avança para o próximo tópico
+                    snap: {
+                        snapTo: 1 / (n - 1),
+                        duration: { min: 0.2, max: 0.4 },
+                        delay: 0.05,
+                        ease: 'power1.inOut'
+                    },
                     onUpdate: (self) => {
                         updateProgress(self.progress);
-                        // divide o progresso em n faixas → índice do item ativo
-                        const idx = Math.min(n - 1, Math.floor(self.progress * n));
+                        const idx = Math.round(self.progress * (n - 1));
                         setActive(idx);
                     }
                 });

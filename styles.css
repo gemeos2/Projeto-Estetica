@@ -476,16 +476,17 @@ SOBRE NÓS — Texto (esquerda) + imagem (direita)
         height: 95vh !important;
     }
 
-    /* ===== Diferenciais (Por que escolher) — scrollytelling mobile =====
-       A seção é "presa" (pin, via JS) por várias telas. A imagem fica
-       fixa no topo e, na parte inferior, os itens passam UM POR VEZ
-       (deslizando para cima) conforme o scroll. */
+    /* ===== Diferenciais (Por que escolher) — slider mobile =====
+       A seção é presa (pin, via JS) com pouco scroll por item + snap, de
+       modo que qualquer rolada leve passa 1 tópico. A imagem fica fixa no
+       topo e, na parte inferior, os itens passam UM POR VEZ (slide-up). */
 
     /* o grid de 2 colunas do desktop vira 1 coluna que ocupa a tela */
     #storyGrid {
         display: flex;
         flex-direction: column;
         height: 100vh;
+        height: 100dvh;
         gap: 0;
     }
 
