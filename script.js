@@ -123,59 +123,159 @@ window.addEventListener('load', () => {
                 }
             },
 
-            /* ===== MOBILE: pin + snap — 1 gesto de scroll = 1 tópico ===== */
+            /* ===== MOBILE: captura de gesto — 1 gesto = no MÁXIMO 1 tópico =====
+               A seção fica presa e cada gesto de rolagem avança/volta
+               exatamente 1 item. O momentum extra é ignorado por um cooldown,
+               garantindo que nunca passa mais de um item por vez. */
             '(max-width: 860px)': function () {
                 const steps = gsap.utils.toArray('.story-steps > .story-step');
                 if (!storySection || !steps.length) return;
 
                 const n = steps.length;
-                // scroll bem curto por item (~18% da tela) — rolada leve já passa
-                const perItem = 0.18;
+                const COOLDOWN = 650;   // ms — ignora o resto do gesto/momentum
 
                 // mostra o primeiro item já de início
-                steps.forEach((s, i) => s.classList.toggle('is-active', i === 0));
-
                 let current = 0;
-                function setActive(idx) {
-                    if (idx === current) return;
+                steps.forEach((s, i) => s.classList.toggle('is-active', i === 0));
+                updateProgress(0);
+
+                let busy = false;       // trava durante a animação + cooldown
+                function step(dir) {
+                    const idx = current + dir;
+                    if (idx < 0 || idx >= n) return false;   // ponta: não consome
+                    busy = true;
                     const prev = steps[current];
                     const next = steps[idx];
-                    const goingDown = idx > current;
-                    gsap.to(prev, {
-                        opacity: 0, y: goingDown ? -40 : 40, duration: .45, ease: 'power2.inOut'
-                    });
+                    const down = dir > 0;
+                    gsap.to(prev, { opacity: 0, y: down ? -40 : 40, duration: .4, ease: 'power2.inOut' });
                     gsap.fromTo(next,
-                        { opacity: 0, y: goingDown ? 40 : -40 },
+                        { opacity: 0, y: down ? 40 : -40 },
                         { opacity: 1, y: 0, duration: .5, ease: 'power2.out' }
                     );
                     prev.classList.remove('is-active');
                     next.classList.add('is-active');
                     current = idx;
+                    updateProgress(n > 1 ? current / (n - 1) : 0);
+                    setTimeout(() => { busy = false; }, COOLDOWN);
+                    return true;
                 }
 
-                ScrollTrigger.create({
+                // trava/destrava o scroll da página
+                let locked = false;
+                let lockedY = 0;        // posição de scroll a manter enquanto travado
+                function lock(on) {
+                    if (on === locked) return;
+                    locked = on;
+                    document.documentElement.style.overflow = on ? 'hidden' : '';
+                    document.body.style.overflow = on ? 'hidden' : '';
+                    if (on) lockedY = window.scrollY;
+                }
+                // reforço: se um flick forte escapar, puxa de volta à posição travada
+                function onScrollGuard() {
+                    if (locked && Math.abs(window.scrollY - lockedY) > 1) {
+                        window.scrollTo(0, lockedY);
+                    }
+                }
+                window.addEventListener('scroll', onScrollGuard, { passive: true });
+
+                // ScrollTrigger só DETECTA quando a seção enquadra na tela.
+                // Sem pin: a seção fica parada porque o overflow é travado.
+                const trigger = ScrollTrigger.create({
                     trigger: storySection,
+                    // ativa quando o topo da seção alcança o topo da viewport
                     start: 'top top',
-                    // distância curta: (n-1) * (fração de uma tela) por item
-                    end: () => '+=' + ((n - 1) * window.innerHeight * perItem),
-                    pin: true,
-                    pinSpacing: true,
-                    anticipatePin: 1,
-                    invalidateOnRefresh: true,
-                    // snap: encaixa magneticamente no item mais próximo ao soltar,
-                    // de modo que qualquer rolada leve avança para o próximo tópico
-                    snap: {
-                        snapTo: 1 / (n - 1),
-                        duration: { min: 0.15, max: 0.35 },
-                        delay: 0,          // encaixa assim que o gesto termina
-                        ease: 'power1.inOut'
-                    },
-                    onUpdate: (self) => {
-                        updateProgress(self.progress);
-                        const idx = Math.round(self.progress * (n - 1));
-                        setActive(idx);
+                    end: 'bottom top',
+                    onToggle: (self) => {
+                        if (self.isActive) {
+                            // alinha a seção ao topo e trava o scroll
+                            const y = storySection.getBoundingClientRect().top + window.scrollY;
+                            window.scrollTo(0, y);
+                            const fromDir = self.direction < 0 ? -1 : 1;
+                            enter(fromDir);
+                        } else {
+                            lock(false);
+                        }
                     }
                 });
+
+                function enter(fromDir) {
+                    lock(true);
+                    // se entrou vindo de baixo, começa mostrando o último item
+                    if (fromDir < 0 && current !== n - 1) {
+                        steps[current].classList.remove('is-active');
+                        current = n - 1;
+                        steps.forEach((s, i) => gsap.set(s, {
+                            opacity: i === current ? 1 : 0, y: i === current ? 0 : 40
+                        }));
+                        steps[current].classList.add('is-active');
+                        updateProgress(1);
+                    } else if (fromDir > 0 && current !== 0) {
+                        // entrou por cima: garante começar no primeiro item
+                        steps[current].classList.remove('is-active');
+                        current = 0;
+                        steps.forEach((s, i) => gsap.set(s, {
+                            opacity: i === current ? 1 : 0, y: i === current ? 0 : 40
+                        }));
+                        steps[current].classList.add('is-active');
+                        updateProgress(0);
+                    }
+                }
+
+                // processa um gesto numa direção; nas pontas, solta a página
+                function gesture(dir) {
+                    if (!locked || busy) return;
+                    const moved = step(dir);
+                    if (!moved) {
+                        // já está na ponta: libera o scroll para sair da seção
+                        lock(false);
+                        // empurra levemente para fora, na direção do gesto
+                        window.scrollBy(0, dir > 0 ? 4 : -4);
+                    }
+                }
+
+                // --- roda do mouse / trackpad ---
+                function onWheel(e) {
+                    if (!locked) return;
+                    e.preventDefault();
+                    if (busy) return;
+                    gesture(Math.sign(e.deltaY));
+                }
+                window.addEventListener('wheel', onWheel, { passive: false });
+
+                // --- toque (swipe) ---
+                let startY = null, gestureFired = false;
+                function onTouchStart(e) { startY = e.touches[0].clientY; gestureFired = false; }
+                function onTouchMove(e) {
+                    if (!locked) return;
+                    e.preventDefault();                 // impede a página de rolar por baixo
+                    if (gestureFired || busy || startY === null) return;
+                    const dy = startY - e.touches[0].clientY;   // >0 = arrastou p/ cima = avançar
+                    if (Math.abs(dy) < 30) return;              // limiar mínimo do swipe
+                    gestureFired = true;                        // um swipe = um passo
+                    gesture(Math.sign(dy));
+                }
+                window.addEventListener('touchstart', onTouchStart, { passive: true });
+                window.addEventListener('touchmove', onTouchMove, { passive: false });
+
+                // teclado (acessibilidade)
+                function onKey(e) {
+                    if (!locked) return;
+                    if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); gesture(1); }
+                    else if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); gesture(-1); }
+                }
+                window.addEventListener('keydown', onKey);
+
+                // limpeza ao trocar de breakpoint
+                return () => {
+                    trigger.kill();
+                    lock(false);
+                    window.removeEventListener('scroll', onScrollGuard);
+                    window.removeEventListener('wheel', onWheel);
+                    window.removeEventListener('touchstart', onTouchStart);
+                    window.removeEventListener('touchmove', onTouchMove);
+                    window.removeEventListener('keydown', onKey);
+                    steps.forEach((s) => gsap.set(s, { clearProps: 'all' }));
+                };
             }
         });
 
