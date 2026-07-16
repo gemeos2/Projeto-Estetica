@@ -129,8 +129,6 @@ window.addEventListener('load', () => {
                 if (!storySection || !steps.length) return;
 
                 const n = steps.length;
-                // 1ª tela mostra o item 0; cada tela extra troca para o próximo
-                const distance = (n - 1) * window.innerHeight;
 
                 // mostra o primeiro item já de início
                 steps.forEach((s, i) => s.classList.toggle('is-active', i === 0));
@@ -158,10 +156,14 @@ window.addEventListener('load', () => {
                 ScrollTrigger.create({
                     trigger: storySection,
                     start: 'top top',
-                    end: '+=' + distance,
+                    // (n-1) telas de scroll — reavaliado a cada refresh para
+                    // acompanhar mudanças de altura da viewport
+                    end: () => '+=' + ((n - 1) * window.innerHeight),
                     pin: true,
                     pinSpacing: true,
                     scrub: false,
+                    anticipatePin: 1,
+                    invalidateOnRefresh: true,
                     onUpdate: (self) => {
                         updateProgress(self.progress);
                         // divide o progresso em n faixas → índice do item ativo
@@ -170,6 +172,18 @@ window.addEventListener('load', () => {
                     }
                 });
             }
+        });
+
+        // recalcula as posições depois que imagens/fontes assentam, para o
+        // pin disparar no ponto certo (evita a seção "pular" ao rolar).
+        ScrollTrigger.refresh();
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => ScrollTrigger.refresh());
+        }
+        // qualquer imagem ainda carregando pode deslocar o layout acima da
+        // seção; ao terminar, refaz o cálculo do pin.
+        document.querySelectorAll('img').forEach((img) => {
+            if (!img.complete) img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
         });
     }
 });
