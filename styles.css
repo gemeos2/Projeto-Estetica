@@ -457,10 +457,12 @@ SOBRE NÓS — Texto (esquerda) + imagem (direita)
     }
 
     /* impede vazamento horizontal no mobile (blobs de aurora, etc.)
-       que empurravam o botão do menu para fora da tela */
+       que empurravam o botão do menu para fora da tela.
+       Usa clip (não hidden) p/ NÃO criar contexto de scroll — assim o
+       position:sticky da seção "Por que escolher" continua funcionando. */
     html,
     body {
-        overflow-x: hidden;
+        overflow-x: clip;
     }
 
     /* subtítulo do hero em 1rem no mobile */
@@ -471,7 +473,60 @@ SOBRE NÓS — Texto (esquerda) + imagem (direita)
     /* hero um pouco menor que a tela cheia no mobile,
        deixando aparecer mais da foto / próxima seção */
     #top {
-        height: 90vh !important;
+        height: 95vh !important;
+    }
+
+    /* ===== Diferenciais (Por que escolher) — scrollytelling mobile =====
+       A seção é "presa" (pin, via JS) por várias telas. A imagem fica
+       fixa no topo e, na parte inferior, os itens passam UM POR VEZ
+       (deslizando para cima) conforme o scroll. */
+
+    /* o grid de 2 colunas do desktop vira 1 coluna que ocupa a tela */
+    #storyGrid {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        gap: 0;
+    }
+
+    /* imagem fixa no topo da tela */
+    #storyVisual {
+        flex: 0 0 auto;
+        padding-top: 1rem;
+        padding-bottom: 0;
+    }
+
+    #storyImg {
+        height: 32vh;
+    }
+
+    /* palco dos itens: ocupa o resto da tela (parte inferior). Os itens
+       ficam empilhados no mesmo lugar (absolute) e o JS mostra um por vez. */
+    .story-steps {
+        position: relative;
+        flex: 1 1 auto;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .story-steps > .story-step {
+        position: absolute;
+        inset: 0;
+        min-height: 0;
+        padding: 1.5rem 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        /* estado inicial: escondido e deslocado p/ baixo; o JS controla */
+        opacity: 0;
+        transform: translateY(40px);
+        will-change: transform, opacity;
+    }
+
+    /* o item ativo (classe adicionada pelo JS) fica visível e centrado */
+    .story-steps > .story-step.is-active {
+        opacity: 1;
+        transform: translateY(0);
     }
 
     /* ícone "X" de fechar o menu (mobile) — cor escura p/ contrastar

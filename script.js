@@ -79,44 +79,98 @@ window.addEventListener('load', () => {
         gsap.registerPlugin(ScrollTrigger);
 
         const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        if (!reduce) {
-            gsap.utils.toArray('.story-step').forEach((step) => {
-                gsap.fromTo(step.children,
-                    { opacity: 0, y: 60, filter: 'blur(10px)' },
-                    {
-                        opacity: 1, y: 0, filter: 'blur(0px)', stagger: .12, ease: 'power3.out',
-                        scrollTrigger: { trigger: step, start: 'top 65%', end: 'top 30%', scrub: 1.2 }
-                    }
-                );
-            });
-
-            const storySection = document.getElementById('diferenciais');
-            if (storySection) {
-                gsap.to('#storyImg', {
-                    scale: 1.15, rotate: 2, ease: 'none',
-                    scrollTrigger: { trigger: storySection, start: 'top top', end: 'bottom bottom', scrub: 1.4 }
-                });
-                gsap.to('#storyGlow', {
-                    opacity: .5, scale: 1.3, ease: 'none',
-                    scrollTrigger: { trigger: storySection, start: 'top top', end: 'bottom bottom', scrub: 1.4 }
-                });
-            }
-        }
-
         const storySection = document.getElementById('diferenciais');
         const bar = document.getElementById('storyBar');
         const pct = document.getElementById('storyPct');
-        if (storySection && bar && pct) {
-            ScrollTrigger.create({
-                trigger: storySection, start: 'top top', end: 'bottom bottom',
-                onUpdate: (self) => {
-                    const p = Math.round(self.progress * 100);
-                    bar.style.width = p + '%';
-                    pct.textContent = String(p).padStart(2, '0');
-                }
-            });
+
+        // barra de progresso da imagem — vale para os dois layouts
+        function updateProgress(p) {
+            const v = Math.round(p * 100);
+            if (bar) bar.style.width = v + '%';
+            if (pct) pct.textContent = String(v).padStart(2, '0');
         }
+
+        ScrollTrigger.matchMedia({
+
+            /* ===== DESKTOP: comportamento original (steps rolam) ===== */
+            '(min-width: 861px)': function () {
+                if (!reduce) {
+                    gsap.utils.toArray('.story-step').forEach((step) => {
+                        gsap.fromTo(step.children,
+                            { opacity: 0, y: 60, filter: 'blur(10px)' },
+                            {
+                                opacity: 1, y: 0, filter: 'blur(0px)', stagger: .12, ease: 'power3.out',
+                                scrollTrigger: { trigger: step, start: 'top 65%', end: 'top 30%', scrub: 1.2 }
+                            }
+                        );
+                    });
+                    if (storySection) {
+                        gsap.to('#storyImg', {
+                            scale: 1.15, rotate: 2, ease: 'none',
+                            scrollTrigger: { trigger: storySection, start: 'top top', end: 'bottom bottom', scrub: 1.4 }
+                        });
+                        gsap.to('#storyGlow', {
+                            opacity: .5, scale: 1.3, ease: 'none',
+                            scrollTrigger: { trigger: storySection, start: 'top top', end: 'bottom bottom', scrub: 1.4 }
+                        });
+                    }
+                }
+                if (storySection) {
+                    ScrollTrigger.create({
+                        trigger: storySection, start: 'top top', end: 'bottom bottom',
+                        onUpdate: (self) => updateProgress(self.progress)
+                    });
+                }
+            },
+
+            /* ===== MOBILE: pin da seção + itens um por vez (slide-up) ===== */
+            '(max-width: 860px)': function () {
+                const steps = gsap.utils.toArray('.story-steps > .story-step');
+                if (!storySection || !steps.length) return;
+
+                const n = steps.length;
+                // 1ª tela mostra o item 0; cada tela extra troca para o próximo
+                const distance = (n - 1) * window.innerHeight;
+
+                // mostra o primeiro item já de início
+                steps.forEach((s, i) => s.classList.toggle('is-active', i === 0));
+
+                let current = 0;
+                function setActive(idx) {
+                    if (idx === current) return;
+                    const prev = steps[current];
+                    const next = steps[idx];
+                    const goingDown = idx > current;
+                    // item que sai desliza p/ cima (ou p/ baixo se voltando)
+                    gsap.to(prev, {
+                        opacity: 0, y: goingDown ? -40 : 40, duration: .45, ease: 'power2.inOut'
+                    });
+                    // item que entra vem de baixo (ou de cima se voltando)
+                    gsap.fromTo(next,
+                        { opacity: 0, y: goingDown ? 40 : -40 },
+                        { opacity: 1, y: 0, duration: .5, ease: 'power2.out' }
+                    );
+                    prev.classList.remove('is-active');
+                    next.classList.add('is-active');
+                    current = idx;
+                }
+
+                ScrollTrigger.create({
+                    trigger: storySection,
+                    start: 'top top',
+                    end: '+=' + distance,
+                    pin: true,
+                    pinSpacing: true,
+                    scrub: false,
+                    onUpdate: (self) => {
+                        updateProgress(self.progress);
+                        // divide o progresso em n faixas → índice do item ativo
+                        const idx = Math.min(n - 1, Math.floor(self.progress * n));
+                        setActive(idx);
+                    }
+                });
+            }
+        });
     }
 });
 
